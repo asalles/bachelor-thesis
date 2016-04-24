@@ -1,0 +1,126 @@
+% Bachelor thesis template
+% Author: Michal Bidlo <bidlom@fit.vutbr.cz> (2008)
+% Update: Ing. Jaroslav Dytrych <idytrych@fit.vutbr.cz> (2016)
+% Modified: Tomas Coufal <ixcoufa09@stud.fit.vutbr.cz> (2016)
+
+
+% remove 'print' when building for IS
+% add 'zadani' when zadani is saved
+\documentclass[english,print]{fitthesis}
+
+\usepackage[czech,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{cmap}
+\usepackage{url}
+\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+
+% another custom packages goes here
+
+\usepackage{listings}
+\usepackage[toc,page,header]{appendix}
+\RequirePackage{titletoc}
+
+% Latin Modern Roman as rm
+\renewcommand{\rmdefault}{lmr}
+% TeX Gyre Heros as sf
+\renewcommand{\sfdefault}{qhv}
+% Latin Modern tt as tt
+\renewcommand{\ttdefault}{lmtt}
+
+% Switch off the replacing of qoutes
+\csdoublequotesoff
+
+% Change the liks appereance based on the build target
+\ifWis
+\ifx\pdfoutput\undefined % not pdflatex
+\else
+  \usepackage{color}
+  \usepackage[unicode,colorlinks,hyperindex,plainpages=false,pdftex]{hyperref}
+  \definecolor{links}{rgb}{0.4,0.5,0}
+  \definecolor{anchors}{rgb}{1,0,0}
+  \def\AnchorColor{anchors}
+  \def\LinkColor{links}
+  \def\pdfBorderAttrs{/Border [0 0 0] }
+  \pdfcompresslevel=9
+\fi
+\else % black text color of links
+\ifx\pdfoutput\undefined % not pdflatex
+\else
+  \usepackage{color}
+  \usepackage[unicode,colorlinks,hyperindex,plainpages=false,pdftex,urlcolor=black,linkcolor=black,citecolor=black]{hyperref}
+  \definecolor{links}{rgb}{0,0,0}
+  \definecolor{anchors}{rgb}{0,0,0}
+  \def\AnchorColor{anchors}
+  \def\LinkColor{links}
+  \def\pdfBorderAttrs{/Border [0 0 0] }
+  \pdfcompresslevel=9
+\fi
+\fi
+
+% Thesis information for the builder
+\projectinfo{
+  % Type
+  project={BP},
+  % Date
+  year=2016,
+  date=\today,
+  %Title
+  title.cs={},
+  title.en={Integration of IBM SoftLayer into ManageIQ},
+  %Author
+  author={Tomáš Coufal},
+  department=UITS,
+  %Suprevisor
+  supervisor=Adam Rogalewicz,
+  supervisor.title.p={Mgr.},
+  supervisor.title.a={Ph.D.},
+}
+
+% Abstract
+\abstract[cs]{}
+\abstract[en]{}
+
+% Keywords
+\keywords[cs]{}
+\keywords[en]{}
+
+% Declaration
+\declaration{}
+
+% ACK
+\acknowledgment{}
+
+\begin{document}
+  % Title page
+  \maketitle
+
+  % Table of content
+  \tableofcontents
+
+  % List of figures and tables
+  \listoffigures
+  \listoftables
+
+  % Thesis content
+  \input{content}
+
+  % Literature
+  \makeatletter
+  \def\@openbib@code{\addcontentsline{toc}{chapter}{Literature}}
+  \makeatother
+  \bibliographystyle{plain}
+  \begin{flushleft}
+  \bibliography{literatura}
+  \end{flushleft}
+
+  % Appendices
+  \appendix
+  \appendixpage
+  \section*{List of Appendices}
+  \addcontentsline{toc}{section}{List of Appendices}
+
+  \startcontents[chapters]
+  \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
+  \input{appendices}
+\end{document}

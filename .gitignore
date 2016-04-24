@@ -1,0 +1,12 @@
+*.dvi
+*.log
+*.blg
+*.bbl
+*.toc
+*.aux
+*.out
+*.lof
+*.ptc
+xcoufa09.pdf
+*.lot
+.*
