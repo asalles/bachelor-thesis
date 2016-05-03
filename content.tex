@@ -5,73 +5,76 @@
 \label{chap:Introduction}
 In past few years the term of Cloud computing resonates worldwide and gains popularity. There have been plenty of papers and articles written about it and every large IT corporation interested in new market has brought their own solutions. Cloud computing has become well established business and ultimate answer for nearly every demand company can have these days. But when it comes to the meaning of these two words not everyone knows what exactly to expect. In a nutshell in means highly scalable and accessible platform available through network connection where the word platform stands for a huge variety of software: from virtual machines and specialized databases to applications like web office suites. In so called cloud whole internal corporate infrastructures are run along with customer facing products with ease. Rising complexity and competition between different cloud providers and types of services creates a demand for an easier management to provide more efficient yet reliable ways to provide the same level of control over the offered services.
 
-By this thesis we slightly describe the main challenges that cloud managing tools are facing while integrating with providers offering various systems and subsytems with different capabilities. The described process is going to be based on an implemented example work \,--\, IBM SoftLayer cloud service integration with open-source project ManageIQ. This work covers how to distinguish and differentiate the same functionality across naming conventions and service capabilities, how to integrate them into ManageIQ and how to establish working communication between SoftLayer and the cloud manager. This thesis aims to simplify, sort out and sum up the knowledge needed to implement such integration for future ManageIQ provider integrators.
+By this thesis we slightly describe the main challenges that cloud managing tools are facing while integrating with providers offering various systems and subsytems with different capabilities. The described process is going to be based on an implemented example work \,--\, IBM SoftLayer cloud service integration with open-source project ManageIQ.\@ This work covers how to distinguish and differentiate the same functionality across naming conventions and service capabilities, how to integrate them into ManageIQ and how to establish working communication between SoftLayer and the cloud manager. This thesis aims to simplify, sort out and sum up the knowledge needed to implement such integration for future ManageIQ provider integrators.
 
-\chapter{Cloud computing}
-\label{chap:Cloud computing}
+\section{Cloud computing}
+\label{sec:Cloud computing}
 Before we reveal the complexity of cloud computing and describe the challenges in managing cloud services across providers it is worth describing what the word \texttt{cloud} actually covers, what it means, why it is a need for huge variety of companies and how the IT industry invented such technologies.
 
-\section{Transition from traditional computing to the cloud}
-\label{sec:Transition from traditional computing to the cloud}
+\subsection{Transition from traditional computing to the cloud}
+\label{sub:Transition from traditional computing to the cloud}
 
 In history the general approach how to implement a solid and reliable IT infrastructure changed several times. To understand well the thinking process behind this evolution let me shortly describe the needs and demands of the industry.
 
-\subsection{Traditional way}
-\label{sub:Traditional way}
+\subsubsection{Traditional way}
+\label{subs:Traditional way}
 
 The historically first and simplest approach for a company to implement and manage their own service in the internet era is to use their own machines and servers. To lower the risks of a hardware failure this solution requires to mirror the application and it's data over multiple servers or even into a cluster of serves. This brings a lot of investments and requires a lot of maintenance on the company side.
 
 Servers are considered as a base unit that encapsulates all the necessary hardware, operating systems, storage and any other utilities necessary. When the applications reaches limits of its dedicated server some additional hardware has to be provided. Despite the fact application can consume a lot of resources, it's not happening all the time. As an example you can think of a delivery or ordering system. During the year the amount of transactions are equal but before e.g. Christmas the peak in transactions can be high. Nevertheless the downside is once you have server configured to run one application that can use all its resources during the peak you can't use the resources left unused during the application idle. And when the system meats failure the recovery process is complicated. In the matter of scalability this approach is not functional enough.
 
-\subsection{Virtualized computing}
-\label{sub:Virtualized computing}
+\subsubsection{Virtualized computing}
+\label{subs:Virtualized computing}
 
 Because of all the disadvantages listed above new approach needs to be invented. To lower the complexity of hardware scaling IT industry moved towards an increase on software difficulty. Unlike hardware maintenance this can be automated easily and requires less resources to deploy. Servers are no more considered as atomic units. The fact that hardware itself can be abstract leads to an invention of virtualized computing. The paradigm of virtualization brings virtual machine manager also known as hypervisor, a specialized operating system designed to run multiple operating systems as applications. This manager provides the necessary layer that can encapsulate each environment. The isolation of hardware from operating systems makes it possible to run multiple services on one physical machine. Each virtual machine is provided by the resources it needs and when these are left unused hypervisor manages to pass them where is needed.
 
-However when a physical failure appears the situation is the same. The service has to be moved to another device. What differs is the solution. Usually the hypervisors are ran in clusters of physical servers where they can cooperate. When one hypervisor is facing a hardware failure the services are smoothly swapped to another physical device - under different hypervisor within the same cluster. This can happened without any outage of service and without the need for running a parallel fallback machine. This flexibility also helps the scalability mentioned above. In case of multiple services running on one physical device, the resources are assinged dynamically and once an application demands more the hypervisor can offer the less loaded virtual machines are transitioned to another server in cluster. This creates an environment where no virtual machines suffers from significant lack of resources.
+However when a physical failure appears the situation is the same. The service has to be moved to another device. What differs is the solution. Usually the hypervisors are ran in clusters of physical servers where they can cooperate. When one hypervisor is facing a hardware failure the services are smoothly swapped to another physical device \,--\, under different hypervisor within the same cluster. This can happened without any outage of service and without the need for running a parallel fallback machine. This flexibility also helps the scalability mentioned above. In case of multiple services running on one physical device, the resources are assinged dynamically and once an application demands more the hypervisor can offer the less loaded virtual machines are transitioned to another server in cluster. This creates an environment where no virtual machines suffers from significant lack of resources.
 
-\subsection{Outsourcing the virtualization}
-\label{sub:Outsourcing the virtualization}
+\subsubsection{Outsourcing the virtualization}
+\label{subs:Outsourcing the virtualization}
 
 The core idea behind virtualization is the same for cloud computing as well. Company using a virtualized solution typically owns the physical servers and maintains these on their own. This produces much overhead costs. On the other hand in cloud computing environment there is no need to insist on keeping the infrastructure. The operational responsibilities are shifted to the cloud provider who is responsible for the hardware and its maintenance. Providers offers remotely controlled virtual environment, location independent and highly scalable solution. The advantages of virtual computing sustain, applications are still run in virtual environment, scaled on demand and flexible. The creation of new virtual machines is a matter of minutes and no additional resources are needed.
 
 Cloud computing providers usually implements some kind of pay-as-you-go model where all costs are based on actual usage and new applications are purchased when needed. Advantage of this payment model becomes even mere significant when company has a lot of applications that needs to run in the same and transaction peaks are expected at the same period of time. The load balancing mechanisms cloud providers dispose with, and thanks to size of their clusters the availability of the application is guaranteed  and the actual costs are much lower compared to the situation when company has to provide all the hardware on their own. And when the peaks are over all the necessary additional resources can be reused by the cloud provider for other applications. To contrast this situation in virtual computing model these resources would be left unused on the company side. The shares resources idea in huge clusters is one of the strongest advantages of cloud computing.
 
-\section{Cloud typology}
-\label{sec:Cloud typology}
+\subsection{Cloud typology}
+\label{sub:Cloud typology}
 
-Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the National Institute of Standards and Technology of the USA defines the Cloud computing by these five most essential characteristics: On-demand self-service, resource pooling, rapid elasticity and measured service.
-On-demand self-service stands for a possibility for consumers to provision a computing power (meant as server time, dedicated storage etc.) as needed and without the necessity to interact with the service provider in person.
-Broad network access is a characteristic that means the provided services can be effectively accessed over the network via standard communication channels independently on client's platform.
+Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the National Institute of Standards and Technology of the USA defines the Cloud computing by these five most essential characteristics:
+
+\begin{enumerate}
+	\item On-demand self-service
+	\item Broad network access
+	\item Resource pooling
+	\item Rapid elasticity
+	\item Measured service
+\end{enumerate}
+
+On-demand self-service stands for a possibility for consumers to provision a computing power (meant as server time, dedicated storage etc.) as needed and without the necessity to interact with the service provider in person by any mean. This allows the customer to avoid the risk of not being able to scale his appliances when there is any kind of outage in the preferred type of communication established between him and the provider.
+
+Broad network access is a term used to describe availability over network via standard communication channels while not discriminating client devices by types or platforms. The term is mainly used in context of private clouds where this idea goes slightly against the security principles this type of cloud is designed for. The main reason to involve broad network access is to make the infrastructure available also for remote workers and via tablets and smartphones.
 
 Resource pooling is a criteria considering dynamical assignment and reassignment of resources to different customers based on their demand in multi-tenant model of cloud service. These resources are location independent and customer is not in control neither has the knowledge over the location where exactly the resources are. Nevertheless the location can be revealed on higher level of abstraction, on country or datacentre scale.
 
-Rapid elasticity presumes the resources are provisioned and released automatically. This actions are done in a short time and from the customer's view the capabilities available typically appear as unlimited and any amount of resources can be up-scaled at any time.
+Rapid elasticity presumes the resources are provisioned and released automatically. This actions are done in a short period of time and from the customer's view the capabilities available typically appear as unlimited and any amount of resources can be up-scaled at any time.
 
 Measured service is a term used for automatic control over cloud clusters resources in order to monitor, analyze, control and optimize the usage. This mechanism provides additional transparency over the service for both the customer and also the provider.
 
 Cloud solutions can have many shapes and forms in general. To distinguish and differentiate between common types of Cloud multiple points of view should be mentioned. One scale to be considered is the availability to purchase \,--\, different deployment models. There exist private and public clouds. Public cloud means the cloud infrastructure is widely accessible by anyone. No matter if organization or a person \,--\, anyone is able to use the service provided. As an example of this type of cloud service the Amazon's AWS EC2, Red Hat's OpenShift and OpenStack, or Google's Cloud Platform can be mentioned. By using public cloud customers share the same infrastructure for their virtual machines with others. In contrary there is a second option available. These so called private clouds are strictly used by one customer only and they are based on a special contract between the cloud service provider and the customer. This provides better options to keep control over the operation of purchased infrastructure and more security advantages as well. Since there is no other user of the cloud it avoids the risk of any vulnerabilities in the isolation of each application running within the cloud.
 
-The other option how to differentiate between available cloud solutions is by its level of abstraction - service models. According to the service-oriented architecture cloud computing providers offer three main services. These are (in stacking order) Infrastructure as a service, Platform as a service and finally Software as a service.
+The other option how to differentiate between available cloud solutions is by its level of abstraction \,--\, service models. According to the service-oriented architecture cloud computing providers offer three main services. These are (in stacking order) Infrastructure as a service, Platform as a service and finally Software as a service.
 
-\subsection{Software as a service (SaaS)}
-\label{sub:Software as a service (SaaS)}
+\subsubsection{Software as a service (SaaS)}
+\label{subs:Software as a service (SaaS)}
 
-The most advanced and complex level of abstraction in cloud computing. Software as a service usually provides a customer facing applications accessible on demand. The provider installs and operates an application software for the customer in their cloud. Typically SaaS is licensed on a subscription basis offering parametrized environment along with high availability insurance. Great examples of such kind of service are Salesforce.com and web office suites like Google Docs or Microsoft Office 365. The portfolio of services covered by SaaS is huge and wide way beyond imagination. From offering solutions for different kinds of analysis like social networks profiling tools and advertisement, over communication platforms including video, audio, mailing services etc. to mobile offices like as the ones mentioned above.
+The most advanced and complex level of abstraction in cloud computing. Software as a service usually provides a customer facing applications accessible on demand. The provider installs and operates an application software for the customer in their cloud. Typically SaaS is licensed on a subscription basis offering parametrized environment along with high availability insurance. Great examples of such kind of service are Salesforce.com and web office suites like Google Docs or Microsoft Office 365. The portfolio of services covered by SaaS is huge and wide way beyond imagination. From offering solutions for different kinds of analysis like social networks profiling tools and advertisement, over communication platforms including video, audio, mailing services etc.\ to mobile offices like as the ones mentioned above.
 
-\subsection{Platform as a service (PaaS)}
-\label{sub:Platform as a service (PaaS)}
+\subsubsection{Platform as a service (PaaS)}
+\label{subs:Platform as a service (PaaS)}
 
+By providing a PaaS customer gains an environment that allows him to develop and run his own applications without a need for building and maintaining a complex infrastructure. Such customer has access to a solid stable and reliable platform of his desire and focus solely on the application he develops and deploys. Described environment covers countless setups and frameworks with or without included database, continuous integration, etc. This approach brings advantages of rapid, easy and secure deployment along with other benefits of the cloud.
 
-By providing a PaaS customer gains an environment that allows him to develop and run his own applications without the need for building and maintaining a complex infrastructure. Such customer has access to a solid stable, reliable platform of his desire and focus solely on application he develops.
+\subsubsection{Infrastructure as a service (IaaS)}
+\label{subs:Infrastructure as a service (IaaS)}
 
-\subsection{Infrastructure as a service (IaaS)}
-\label{sub:Infrastructure as a service (IaaS)}
-
-
-\chapter{IBM SoftLayer}
-\label{chap:IBM SoftLayer}
-
-\chapter{ManageIQ}
-\label{chap:ManageIQ}
-ManageIQ is an opensource project developed by community a
+Last but not least the most low-lever approach how to provide services via cloud is to provide base infrastructure. This reflects the need for customized setups which are trusted by customer. In this case the term of infrastructure stands for virtual machines or even bare metal ones. These are usually deployed based on images built by customer itself which allows to quickly scale over predefined setups.
