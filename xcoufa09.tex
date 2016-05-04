@@ -28,10 +28,10 @@
 % Latin Modern tt as tt
 \renewcommand{\ttdefault}{lmtt}
 
-% Switch off the replacing of qoutes
+% Switch off the replacing of quotes
 \csdoublequotesoff
 
-% Change the liks appereance based on the build target
+% Change the links appearance based on the build target
 \ifWis
 \ifx\pdfoutput\undefined % not pdflatex
 \else
@@ -79,7 +79,7 @@
 
 % Abstract
 \abstract[cs]{Cloudová řešení počítačové infrastuktury jsou dnes běžnou realitou. A to jak v malých firmách tak i v těch největších. Velmi často se zákazník nespoléhá pouze na jednoho poskytovatele a dostupná řešení různě kombinuje. Takovýto komplexní systém však není snadné efektivně řídit. Proto existují projekty jako ManageIQ, které zprostředkovávají správu nad mnoha dodavateli. Záběr je velmi široký \.--\. od poskytovatelů virtuálních a fyzických serverů, platforem a kontainerů až po správu webových aplikací. Pro cloudové managery, jak se projekty typu ManageIQ nazývají, je klíčové nabízet možnost propojit co nejvíce řešení. Tato práce pojednává o zajištění podpory pro IBM SoftLayer v rámci ManageIQ, tak aby byl zachován uživatelský komfort zákazníka. To zahrnuje automatické prohledávání uživatelkého prostoru, import všech vhodných součástí a možnosti pro manipulaci s existujícími prvky či vytváření nových.}
-\abstract[en]{Cloud has become a reality in the field of corporate IT infrustructures. It is not an easy task to find the right solution for a company. Although it is even more dificult to effectively manage such complex systems. This lead to invention of clound management systems. ManageIQ is one of those projects. It offers an unified interface for many cloud providers. And including as many others as possible is crucial for its success. This thesis wants to introduce you to such process by describing the IBM SoftLayer integration. }
+\abstract[en]{Cloud has become a reality in the field of corporate IT infrustructures. It is not an easy task to find the right solution for a company. Although it is even more difficult to effectively manage such complex systems. This lead to invention of cloud management systems. ManageIQ is one of those projects. It offers an unified interface for many cloud providers. And including as many others as possible is crucial for its success. This thesis wants to introduce you to such process by describing the IBM SoftLayer integration. }
 
 % Keywords
 \keywords[cs]{cloudové techologie, ManageIQ, IBM SoftLayer, Red Hat, poskytovatelé cloudu, fog, Ruby}
@@ -94,35 +94,35 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 \acknowledgment{Děkuji společnosti Red Hat Czech, a.s. za poskytnuté zázemí a prostředky pro testování. Velmi si cenním podpory a informací od týmu vývojářů, se kterými jsem mohl svou práci konzultovat. Převáženě si vážím znalostí Martina Povolného a Ladislava Smoly, které mi velmi pomohly a pro řešení práce byly klíčové.}
 
 \begin{document}
-  % Title page
-  \maketitle
+% Title page
+\maketitle
 
-  % Table of content
-  \tableofcontents
+% Table of content
+\tableofcontents
 
-  % List of figures and tables
-  \listoffigures
-  \listoftables
+% List of figures and tables
+\listoffigures
+\listoftables
 
-  % Thesis content
-  \input{content}
+% Thesis content
+\input{content}
 
-  % Literature
-  \makeatletter
-  \def\@openbib@code{\addcontentsline{toc}{chapter}{Literature}}
-  \makeatother
-  \bibliographystyle{plain}
-  \begin{flushleft}
-  \bibliography{literatura}
-  \end{flushleft}
+% Literature
+\makeatletter
+\def\@openbib@code{\addcontentsline{toc}{chapter}{Literature}}
+\makeatother
+\bibliographystyle{plain}
+\begin{flushleft}
+	\bibliography{references}
+\end{flushleft}
 
-  % Appendices
-  \appendix
-  \appendixpage
-  \section*{List of Appendices}
-  \addcontentsline{toc}{section}{List of Appendices}
+% Appendices
+\appendix
+\appendixpage
+\section*{List of Appendices}
+\addcontentsline{toc}{section}{List of Appendices}
 
-  \startcontents[chapters]
-  \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
-  \input{appendices}
+\startcontents[chapters]
+\printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
+\input{appendices}
 \end{document}
