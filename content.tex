@@ -55,7 +55,7 @@ On-demand self-service stands for a possibility for consumers to provision a com
 
 Broad network access is a term used to describe availability over network via standard communication channels while not discriminating client devices by types or platforms. The term is mainly used in context of private clouds where this idea goes slightly against the security principles this type of cloud is designed for. The main reason to involve broad network access is to make the infrastructure available also for remote workers and via tablets and smartphones.
 
-Resource pooling is a criteria considering dynamical assignment and reassignment of resources to different customers based on their demand in multi-tenant model of cloud service. These resources are location independent and customer is not in control neither has the knowledge over the location where exactly the resources are. Nevertheless the location can be revealed on higher level of abstraction, on country or datacentre scale.
+Resource pooling is a criteria considering dynamical assignment and reassignment of resources to different customers based on their demand in multi-tenant model of cloud service. These resources are location independent and customer is not in control neither has the knowledge over the location where exactly the resources are. Nevertheless the location can be revealed on higher level of abstraction, on country or data center scale.
 
 Rapid elasticity presumes the resources are provisioned and released automatically. This actions are done in a short period of time and from the customer's view the capabilities available typically appear as unlimited and any amount of resources can be up-scaled at any time.
 
@@ -85,18 +85,36 @@ Last but not least the most low-lever approach how to provide services via cloud
 
 Among others the IBM company also offers their own cloud solution the so called \textbf{IBM Cloud}. It's not a standalone project it's a summary name for whole portfolio. It comprises of complementary yet independent platforms and tools covering an extensive amount of application and use-cases delivering customer adjustable setups and products. When the customer demands IaaS, \emph{IBM SoftLayer} is the product he's asking for. For platform-based requirements IBM offers a cloud service named \emph{Bluemix}. There is also a vast amount of SaaS solutions delivered by the companyvia their very own \emph{IBM cloud} market. Some of them based on the \emph{IBM Watson} intelligence some standalone. This complex tooling allows IBM to deliver in the cloud market environment.
 
-\section{SoftLayer}
-\label{sec:SoftLayer}
+\chapter{IBM SoftLayer}
+\label{chap:IBM SoftLayer}
 
-\subsection{Available interfaces}
-\label{sub:Available interfaces}
+\section{Components}
+\label{sec:Components}
 
-\subsection{Components}
-\label{sub:Components}
+\subsection{Regions and Zones}
+\label{sub:Regions and Zones}
 
-\subsubsection{Regions and Zones}
-\label{subs:Regions and Zones}
+One of them most important yet moving parts when setting up the cloud infrastructure is to distinguish where the appliance is physically run. This is important in a case when customer wants to mirror the infrastructure around the globe \,--\, to ensure the accessibility, reliability and swiftness is as good as it is possible and not dependent on its user geographical location and time. It's a factor that can easily avoid or at least reduce the connection issues caused by Internet service providers and exchange points outages. Since neither the customer nor cloud provider is responsible and in charge of the connectivity provided to users of the infrastructure, placing customers appliances as close as possible to its user destination makes sense. This is what usually the \emph{Regions} are referring to. However in the cloud environment specification of the exact physical location does not make much sense. The approximate and relative location is sufficient and the most common way is to refer to a continent or a market. For example the \textbf{Google Compute Engine}\cite{gce} specifies its regions as: \texttt{Central US}, \texttt{Eastern US}, \texttt{Western Europe}, etc.
 
+On the other hand a complementary entity takes place within each region. These are called \emph{Zones} or \emph{Availability Zones}. Numerous zones are present in each \emph{Region}. They are independent each one on another. The reason is to ensure that in a case of outage, scheduled maintenance or any other kind of issue affecting a zone the others are left untouched and available. When one zone is failing the others in the same remain remain reliable and available.
+
+By using and specifying proper \emph{Regions} and \emph{Availability Zones} the customer can assure and enhance reliability, reduce latency and build a robust system which is both as close as the customer needs and distributed around the world in the same time. Each cloud provider has a slightly different philosophy how they comprehend and implement these principles. Let's describe the two most common approaches.
+
+As we already mentioned the \emph{Google Compute Engine} where the understanding of the area specifications is probably the most fitting the definition. There are \emph{Regions} which refers to a continent or a country where the data centers are placed. Also within each there are couple of \emph{Availability Zones} \,--\, usually 3 or 4 of them and these are independent. As a next example the \textbf{Microsoft Azure} provider can be mentioned. Their understanding of this scheme is a bit different \,--\, they provide \emph{Regions} based solution only\cite{azure}. These are specified in much greater detail then in the Google's case and there are more of them. This provider is substituting \emph{Zones} by making regions smaller so customer can easily target the user (by selecting not just the continent but even a specific country) and yet keep the backup in the closest region. As an example this is a sample how they are named and where they are placed in the \textbf{Azure} cloud provider: \texttt{Central US} in Iowa, \texttt{North Central US} placed in Illinois or \texttt{Japan West} set in Osaka. Just a reminder, the exact locations are not publicly available for clouds of \textbf{Google Compute Engine} type because it's not important.
+
+Let's focus on how the schema of\emph{Regions} and \emph{Zones} works in the \textbf{IBM SoftLayer} cloud provider. Their model is quite similar to the \textbf{Microsoft Azure}. However they do not use the term of \emph{Region}. Instead the \emph{Data Center} term is used\cite{softlayer_datacenters}. This term truly refer to an exact location (for each center exact city is told). As the product pages describe the locations where data centers are placed are for instance \texttt{Dallas 01}, \texttt{Dallas 09}, \texttt{Amsterdam 02}, \texttt{Washington, D.C. 01} or just \texttt{Paris}.
+
+As you noticed, there might be some redundancy within a location. When this happens (there are multiple data centers in one city) each data center is numbered. So how does this fit in the scheme described above? For the purposes of this thesis \,--\, for successful integration into \textbf{ManageIQ} let's consider each data center as an \emph{Region}. This is a valid approach because when the user of \textbf{IBM SoftLayer} is provisioning a new appliance he needs to select the desired data center of deployment. That's the same situation when deploying into \textbf{Google Compute Engine} \,--\, you have to select the \emph{Region}. Another point of view is that when there are multiple data centers within one city (let's say in the same \emph{Region}) the situation recalls a state when the provider offers multiple \emph{Availabilty Zones} for the region:
+
+\begin{enumerate}
+	\item The data centers are in the same \emph{Region}
+	\item Each one is independent on another
+\end{enumerate}
+
+This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data centers}. On the other hand as being said each data center is selectable \,--\, it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his appliance. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
+
+\subsection{Servers}
+\label{sub:Servers}
 
 
 \chapter{ManageIQ}
@@ -104,6 +122,8 @@ Among others the IBM company also offers their own cloud solution the so called 
 
 A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} brought some standardized API, covered functionality which should be offered for every such provided technology and integrated framework.
 
+\section{Available interfaces}
+\label{sec:Available interfaces}
 
 \chapter{Implementation}
 \label{chap:Implemented scheme}
