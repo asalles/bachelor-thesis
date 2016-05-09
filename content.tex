@@ -1,15 +1,16 @@
 % Tomas Coufal xcoufa09@stud.fit.vutbr.cz
 % Content of the Bachelor Thesis
+%!TEX root = xcoufa09.tex
 
 \chapter{Introduction}
 \label{chap:Introduction}
 In past few years the term of Cloud computing resonates worldwide and gains popularity. There have been plenty of papers and articles written about it and every large IT corporation interested in new market has brought their own solutions. Cloud computing has become well established business and ultimate answer for nearly every demand company can have these days. But when it comes to the meaning of these two words not everyone knows what exactly to expect. In a nutshell in means highly scalable and accessible platform available through network connection where the word platform stands for a huge variety of software: from virtual machines and specialized databases to applications like web office suites. In so called cloud whole internal corporate infrastructures are run along with customer facing products with ease. Rising complexity and competition between different cloud providers and types of services creates a demand for an easier management to provide more efficient yet reliable ways to provide the same level of control over the offered services.
 
-By this thesis we slightly describe the main challenges that cloud managing tools are facing while integrating with providers offering various systems and subsytems with different capabilities. The described process is going to be based on an implemented example work \,--\, IBM SoftLayer cloud service integration with open-source project ManageIQ.\@ This work covers how to distinguish and differentiate the same functionality across naming conventions and service capabilities, how to integrate them into ManageIQ and how to establish working communication between SoftLayer and the cloud manager. This thesis aims to simplify, sort out and sum up the knowledge needed to implement such integration for future ManageIQ provider integrators.
+By this thesis we slightly describe the main challenges that cloud managing tools are facing while integrating with providers offering various systems and subsytems with different capabilities. The described process is going to be based on an implemented example work \,--\, \textbf{IBM SoftLayer} cloud service integration with open-source project \textbf{ManageIQ}. This work covers how to distinguish and differentiate the same functionality across naming conventions and service capabilities, how to integrate them into \textbf{ManageIQ} and how to establish working communication between \textbf{IBM SoftLayer} and the cloud manager. This thesis aims to simplify, sort out and sum up the knowledge needed to implement such integration for future \textbf{ManageIQ} provider integrators.
 
 \section{Cloud computing}
 \label{sec:Cloud computing}
-Before we reveal the complexity of cloud computing and describe the challenges in managing cloud services across providers it is worth describing what the word \texttt{cloud} actually covers, what it means, why it is a need for huge variety of companies and how the IT industry invented such technologies.
+Before we reveal the complexity of cloud computing and describe the challenges in managing cloud services across providers it is worth describing what the word \texttt{cloud} actually covers, what it means, why it is a need for huge variety of companies and how the IT industry invented such technologies~\cite{cervone}.
 
 \subsection{Transition from traditional computing to the cloud}
 \label{sub:Transition from traditional computing to the cloud}
@@ -40,7 +41,7 @@ Cloud computing providers usually implements some kind of pay-as-you-go model wh
 \subsection{Cloud typology}
 \label{sub:Cloud typology}
 
-Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the National Institute of Standards and Technology of the USA defines the Cloud computing by these five most essential characteristics:
+Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the \emph{National Institute of Standards and Technology} of the USA defines the Cloud computing by these five most essential characteristics~\cite{hu}:
 
 \begin{enumerate}
 	\item On-demand self-service
@@ -60,14 +61,14 @@ Rapid elasticity presumes the resources are provisioned and released automatical
 
 Measured service is a term used for automatic control over cloud clusters resources in order to monitor, analyze, control and optimize the usage. This mechanism provides additional transparency over the service for both the customer and also the provider.
 
-Cloud solutions can have many shapes and forms in general. To distinguish and differentiate between common types of Cloud multiple points of view should be mentioned. One scale to be considered is the availability to purchase \,--\, different deployment models. There exist private and public clouds. Public cloud means the cloud infrastructure is widely accessible by anyone. No matter if organization or a person \,--\, anyone is able to use the service provided. As an example of this type of cloud service the Amazon's AWS EC2, Red Hat's OpenShift and OpenStack, or Google's Cloud Platform can be mentioned. By using public cloud customers share the same infrastructure for their virtual machines with others. In contrary there is a second option available. These so called private clouds are strictly used by one customer only and they are based on a special contract between the cloud service provider and the customer. This provides better options to keep control over the operation of purchased infrastructure and more security advantages as well. Since there is no other user of the cloud it avoids the risk of any vulnerabilities in the isolation of each application running within the cloud.
+Cloud solutions can have many shapes and forms in general. To distinguish and differentiate between common types of Cloud multiple points of view should be mentioned. One scale to be considered is the availability to purchase \,--\, different deployment models. There exist private and public clouds. Public cloud means the cloud infrastructure is widely accessible by anyone. No matter if organization or a person \,--\, anyone is able to use the service provided. As an example of this type of cloud service the Amazon's \emph{AWS EC2}, Red Hat's \emph{OpenShift} and \emph{OpenStack}, Microsoft's \emph{Azure} or \emph{Google Cloud Platform} can be mentioned. By using public cloud customers share the same infrastructure for their virtual machines with others. In contrary there is a second option available. These so called private clouds are strictly used by one customer only and they are based on a special contract between the cloud service provider and the customer. This provides better options to keep control over the operation of purchased infrastructure and more security advantages as well. Since there is no other user of the cloud it avoids the risk of any vulnerabilities in the isolation of each application running within the cloud.
 
 The other option how to differentiate between available cloud solutions is by its level of abstraction \,--\, service models. According to the service-oriented architecture cloud computing providers offer three main services. These are (in stacking order) Infrastructure as a service, Platform as a service and finally Software as a service.
 
 \subsubsection{Software as a service (SaaS)}
 \label{subs:Software as a service (SaaS)}
 
-The most advanced and complex level of abstraction in cloud computing. Software as a service usually provides a customer facing applications accessible on demand. The provider installs and operates an application software for the customer in their cloud. Typically SaaS is licensed on a subscription basis offering parametrized environment along with high availability insurance. Great examples of such kind of service are Salesforce.com and web office suites like Google Docs or Microsoft Office 365. The portfolio of services covered by SaaS is huge and wide way beyond imagination. From offering solutions for different kinds of analysis like social networks profiling tools and advertisement, over communication platforms including video, audio, mailing services etc.\ to mobile offices like as the ones mentioned above.
+The most advanced and complex level of abstraction in cloud computing. Software as a service usually provides a customer facing applications accessible on demand. The provider installs and operates an application software for the customer in their cloud. Typically SaaS is licensed on a subscription basis offering parametrized environment along with high availability insurance. Great examples of such kind of service are Salesforce.com and web office suites like \emph{Google Docs} or \emph{Microsoft Office 365}. The portfolio of services covered by SaaS is huge and wide way beyond imagination. From offering solutions for different kinds of analysis like social networks profiling tools and advertisement, over communication platforms including video, audio, mailing services etc.\ to mobile offices like as the ones mentioned above.
 
 \subsubsection{Platform as a service (PaaS)}
 \label{subs:Platform as a service (PaaS)}
@@ -78,3 +79,43 @@ By providing a PaaS customer gains an environment that allows him to develop and
 \label{subs:Infrastructure as a service (IaaS)}
 
 Last but not least the most low-lever approach how to provide services via cloud is to provide base infrastructure. This reflects the need for customized setups which are trusted by customer. In this case the term of infrastructure stands for virtual machines or even bare metal ones. These are usually deployed based on images built by customer itself which allows to quickly scale over predefined setups.
+
+\chapter{IBM Cloud}
+\label{chap:IBM Cloud}
+
+Among others the IBM company also offers their own cloud solution the so called \textbf{IBM Cloud}. It's not a standalone project it's a summary name for whole portfolio. It comprises of complementary yet independent platforms and tools covering an extensive amount of application and use-cases delivering customer adjustable setups and products. When the customer demands IaaS, \emph{IBM SoftLayer} is the product he's asking for. For platform-based requirements IBM offers a cloud service named \emph{Bluemix}. There is also a vast amount of SaaS solutions delivered by the companyvia their very own \emph{IBM cloud} market. Some of them based on the \emph{IBM Watson} intelligence some standalone. This complex tooling allows IBM to deliver in the cloud market environment.
+
+\section{SoftLayer}
+\label{sec:SoftLayer}
+
+\subsection{Available interfaces}
+\label{sub:Available interfaces}
+
+\subsection{Components}
+\label{sub:Components}
+
+\subsubsection{Regions and Zones}
+\label{subs:Regions and Zones}
+
+
+
+\chapter{ManageIQ}
+\label{chap:ManageIQ}
+
+A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} brought some standardized API, covered functionality which should be offered for every such provided technology and integrated framework.
+
+
+\chapter{Implementation}
+\label{chap:Implemented scheme}
+
+As expected \textbf{ManageIQ} offers a namespace to bind the desired functionality.
+
+\subsection{Cloud Manager}
+\label{sub:Cloud Manager}
+
+
+
+\subsection{Network Manager}
+\label{sub:Network Manager}
+
+In order to connect and visualize relations of discovered appliances ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
