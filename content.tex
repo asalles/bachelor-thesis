@@ -29,7 +29,7 @@ Servers are considered as a base unit that encapsulates all the necessary hardwa
 
 Because of all the disadvantages listed above new approach needs to be invented. To lower the complexity of hardware scaling IT industry moved towards an increase on software difficulty. Unlike hardware maintenance this can be automated easily and requires less resources to deploy. Servers are no more considered as atomic units. The fact that hardware itself can be abstract leads to an invention of virtualized computing. The paradigm of virtualization brings virtual machine manager also known as hypervisor, a specialized operating system designed to run multiple operating systems as applications. This manager provides the necessary layer that can encapsulate each environment. The isolation of hardware from operating systems makes it possible to run multiple services on one physical machine. Each virtual machine is provided by the resources it needs and when these are left unused hypervisor manages to pass them where is needed.
 
-However when a physical failure appears the situation is the same. The service has to be moved to another device. What differs is the solution. Usually the hypervisors are ran in clusters of physical servers where they can cooperate. When one hypervisor is facing a hardware failure the services are smoothly swapped to another physical device \,--\, under different hypervisor within the same cluster. This can happened without any outage of service and without the need for running a parallel fallback machine. This flexibility also helps the scalability mentioned above. In case of multiple services running on one physical device, the resources are assinged dynamically and once an application demands more the hypervisor can offer the less loaded virtual machines are transitioned to another server in cluster. This creates an environment where no virtual machines suffers from significant lack of resources.
+However when a physical failure appears the situation is the same. The service has to be moved to another device. What differs is the solution. Usually the hypervisors are run in clusters of physical servers where they can cooperate. When one hypervisor is facing a hardware failure the services are smoothly swapped to another physical device \,--\, under different hypervisor within the same cluster. This can happened without any outage of service and without the need for running a parallel fallback machine. This flexibility also helps the scalability mentioned above. In case of multiple services running on one physical device, the resources are assinged dynamically and once an application demands more the hypervisor can offer the less loaded virtual machines are transitioned to another server in cluster. This creates an environment where no virtual machines suffers from significant lack of resources.
 
 \subsubsection{Outsourcing the virtualization}
 \label{subs:Outsourcing the virtualization}
@@ -94,7 +94,7 @@ Among others the IBM company also offers their own cloud solution the so called 
 \subsection{Regions, Zones and Data centers}
 \label{sub:Regions, Zones and Data centers}
 
-One of them most important yet moving parts when setting up the cloud infrastructure is to distinguish where the appliance is physically run. This is important in a case when customer wants to mirror the infrastructure around the globe \,--\, to ensure the accessibility, reliability and swiftness is as good as it is possible and not dependent on its user geographical location and time. It's a factor that can easily avoid or at least reduce the connection issues caused by Internet service providers and exchange points outages. Since neither the customer nor cloud provider is responsible and in charge of the connectivity provided to users of the infrastructure, placing customers appliances as close as possible to its user destination makes sense. This is what usually the \emph{Regions} are referring to. However in the cloud environment specification of the exact physical location does not make much sense. The approximate and relative location is sufficient and the most common way is to refer to a continent or a market. For example the \textbf{Google Compute Engine}\cite{gce} specifies its regions as: \texttt{Central US}, \texttt{Eastern US}, \texttt{Western Europe}, etc.
+One of them most important yet moving parts when setting up the cloud infrastructure is to distinguish where the appliance is physically run. This is important in a case when customer wants to mirror the infrastructure around the globe \,--\, to ensure the accessibility, reliability and swiftness is as good as it is possible and not dependent on its user geographical location and time. It's a factor that can easily avoid or at least reduce the connection issues caused by Internet service providers and exchange points outages. Since neither the customer nor cloud provider is responsible and in charge of the connectivity provided to users of the infrastructure, placing customers devices as close as possible to its user destination makes sense. This is what usually the \emph{Regions} are referring to. However in the cloud environment specification of the exact physical location does not make much sense. The approximate and relative location is sufficient and the most common way is to refer to a continent or a market. For example the \textbf{Google Compute Engine}\cite{gce} specifies its regions as: \texttt{Central US}, \texttt{Eastern US}, \texttt{Western Europe}, etc.
 
 On the other hand a complementary entity takes place within each region. These are called \emph{Zones} or \emph{Availability Zones}. Numerous zones are present in each \emph{Region}. They are independent each one on another. The reason is to ensure that in a case of outage, scheduled maintenance or any other kind of issue affecting a zone the others are left untouched and available. When one zone is failing the others in the same remain remain reliable and available.
 
@@ -111,7 +111,7 @@ As you noticed, there might be some redundancy within a location. When this happ
 	\item Each one is independent on another.
 \end{enumerate}
 
-This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data centers}. On the other hand as being said each data center is selectable \,--\, it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his appliance. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
+This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data centers}. On the other hand as being said each data center is selectable \,--\, it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his device. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
 
 \subsection{Servers}
 \label{sub:Servers}
@@ -132,6 +132,35 @@ The opposite option is to reserve a \emph{dedicated hardware}. It's more expensi
 \label{subs:Bare metal servers}
 
 There's also an option \,--\, offered only by a minority of companies, to use the cloud to provide so called \emph{bare metal servers}. This means a completely different approach than cloud is known for. While user wants to keep his data super secure and isolated yet in stable, reliable and affordable environment it's possible to order a specific physical rack and run the customer's server there. Basically this approach recalls a kind of server housing with benefits of the cloud.
+
+\subsection{Flavors}
+\label{sub:Flavors}
+
+Once the customer knows where the virtual machine should be run and what kind of virtualization the deployed setup requires, it's worth choosing the hardware (no matter if virtual or physical). For instance this specification involves aspects like the processor cores count and frequency, amount of memory available for the device or how data are being stored \,--\, if data are stored on a local hard drive or available via network, what type of hard drive it should be, how many of them are attached, what should be their capacity etc. All these aspects can be specified manually and in special cases they are. The more common work flow is to store the favorite setups as \emph{flavors}. Each cloud provider also offers some default ones. For example the Table~\ref{tab:IBM SoftLayer default flavors} below describes the default \emph{flavors} used in the \textbf{IBM SoftLayer} cloud.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{llrrrr}
+		\toprule
+		Identifier & Name                 & CPU cores & Memory (RAM) & Hard drives (HDD)     \\
+		\midrule
+		m1.tiny    & Tiny Instance        & 1         & 1\,GB        & 1 $\times$ 25\,GB     \\
+		m1.small   & Small Instance       & 2         & 2\,GB        & 1 $\times$ 100\,GB    \\
+		m1.medium  & Medium Instance      & 4         & 4\,GB        & 1 $\times$ 500\,GB    \\
+		m1.large   & Large Instance       & 8         & 8\,GB        & 1 $\times$ 750\,GB    \\
+		m1.xlarge  & Extra Large Instance & 16        & 16\,GB       & 1 $\times$ 1\,000\,GB \\
+		\bottomrule
+	\end{tabular}
+	\caption{IBM SoftLayer default flavors}\label{tab:IBM SoftLayer default flavors}
+\end{table}
+
+\subsection{Images and snapshots}
+\label{sub:Images and snapshots}
+
+\emph{Images} are used in order to replicate a virtual server running in cloud, store setups or deploy preconfigured systems. These can be created basically in two possible ways. The provider can produce some basic images with operating systems based on the default installation setups adjusted to reflect the cloud specific features, configurations, etc. Such images can provide also a preconfigured application setup or platforms. As being said these images are usually prepared by the provider to facilitate initial setups for the customer. Of course the user can deploy such images on his own too but since this type of images is containing a default configuration it's much convenient for the customer to be provided by them. There's also a second way how to create an image. There's a possibility to create a \emph{snapshot} of running virtual machine. This is pretty essential feature for each cloud \,--\, prepare a setup and save it as an image for backup and redeployment purposes. User usually wants to scale his infrastructure and distribute it around the world in different regions or providers. By producing snapshots of his running virtual machines or uploading his own preconfigured ones it's easy to preserve state, data and environment and deploy, copy the instance, elsewhere. These image and snapshots created by a customer can be flagged as private and available for his own use only. Or there's also a possibility to make such image publicly available for other users of the cloud.
+
+\subsection{Networking}
+\label{sub:Networking}
 
 
 
@@ -156,4 +185,4 @@ As expected \textbf{ManageIQ} offers a namespace to bind the desired functionali
 \subsection{Network Manager}
 \label{sub:Network Manager}
 
-In order to connect and visualize relations of discovered appliances ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
+In order to connect and visualize relations of discovered devices ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
