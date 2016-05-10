@@ -10,7 +10,7 @@ By this thesis we slightly describe the main challenges that cloud managing tool
 
 \section{Cloud computing}
 \label{sec:Cloud computing}
-Before we reveal the complexity of cloud computing and describe the challenges in managing cloud services across providers it is worth describing what the word \texttt{cloud} actually covers, what it means, why it is a need for huge variety of companies and how the IT industry invented such technologies~\cite{cervone}.
+Before we reveal the complexity of cloud computing and describe the challenges in managing cloud services across providers it is worth describing what the word \texttt{cloud} actually covers, what it means, why it is a need for huge variety of companies and how the IT industry invented such technologies\cite{cervone}.
 
 \subsection{Transition from traditional computing to the cloud}
 \label{sub:Transition from traditional computing to the cloud}
@@ -41,7 +41,7 @@ Cloud computing providers usually implements some kind of pay-as-you-go model wh
 \subsection{Cloud typology}
 \label{sub:Cloud typology}
 
-Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the \emph{National Institute of Standards and Technology} of the USA defines the Cloud computing by these five most essential characteristics~\cite{hu}:
+Among the advantages of Cloud computing not only the scalability has to be taken into account. There are plenty of fields where the cloud solution excels in. For example the \emph{National Institute of Standards and Technology} of the USA defines the Cloud computing by these five most essential characteristics\cite{hu}:
 
 \begin{enumerate}
 	\item On-demand self-service
@@ -91,8 +91,8 @@ Among others the IBM company also offers their own cloud solution the so called 
 \section{Components}
 \label{sec:Components}
 
-\subsection{Regions and Zones}
-\label{sub:Regions and Zones}
+\subsection{Regions, Zones and Data centers}
+\label{sub:Regions, Zones and Data centers}
 
 One of them most important yet moving parts when setting up the cloud infrastructure is to distinguish where the appliance is physically run. This is important in a case when customer wants to mirror the infrastructure around the globe \,--\, to ensure the accessibility, reliability and swiftness is as good as it is possible and not dependent on its user geographical location and time. It's a factor that can easily avoid or at least reduce the connection issues caused by Internet service providers and exchange points outages. Since neither the customer nor cloud provider is responsible and in charge of the connectivity provided to users of the infrastructure, placing customers appliances as close as possible to its user destination makes sense. This is what usually the \emph{Regions} are referring to. However in the cloud environment specification of the exact physical location does not make much sense. The approximate and relative location is sufficient and the most common way is to refer to a continent or a market. For example the \textbf{Google Compute Engine}\cite{gce} specifies its regions as: \texttt{Central US}, \texttt{Eastern US}, \texttt{Western Europe}, etc.
 
@@ -107,14 +107,32 @@ Let's focus on how the schema of\emph{Regions} and \emph{Zones} works in the \te
 As you noticed, there might be some redundancy within a location. When this happens (there are multiple data centers in one city) each data center is numbered. So how does this fit in the scheme described above? For the purposes of this thesis \,--\, for successful integration into \textbf{ManageIQ} let's consider each data center as an \emph{Region}. This is a valid approach because when the user of \textbf{IBM SoftLayer} is provisioning a new appliance he needs to select the desired data center of deployment. That's the same situation when deploying into \textbf{Google Compute Engine} \,--\, you have to select the \emph{Region}. Another point of view is that when there are multiple data centers within one city (let's say in the same \emph{Region}) the situation recalls a state when the provider offers multiple \emph{Availabilty Zones} for the region:
 
 \begin{enumerate}
-	\item The data centers are in the same \emph{Region}
-	\item Each one is independent on another
+	\item Such data centers are in the same \emph{Region}.
+	\item Each one is independent on another.
 \end{enumerate}
 
 This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data centers}. On the other hand as being said each data center is selectable \,--\, it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his appliance. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
 
 \subsection{Servers}
 \label{sub:Servers}
+
+Once the user figures out where he can run his appliances, it's worth discovering what is being provisioned and run. In the clouds of the \emph{IaaS} type it is usually a some kind of \emph{server}. Previously it's been mentioned\ref{subs:Outsourcing the virtualization} that the most common type of device is a \emph{virtual server}. But this is not the only article available. For numerous security reasons some cloud providers brings the possibility to run such virtual server in three types of environment. \textbf{IBM SoftLayer} provides all of them.
+
+\subsubsection{Shared hardware}
+\label{subs:Shared hardware}
+
+To run a \emph{virtual server} on a shared hardware is the cheaper variant. It is also suitable for most of the needs. While the customer does not demand any special treatment like enhanced security features or a specific type of hardware, this is the way to go. The provisioned virtual server is placed on a server within the data center and under a \emph{hypervisor}. This hypervisor manages also other appliances and does not differentiate who is the customer, owner of the virtual machine. Shared hawrdare means shared environment in a sense of a communal hypervisor and shared physical layer between users.
+
+\subsubsection{Dedicated hardware}
+\label{subs:Dedicated hardware}
+
+The opposite option is to reserve a \emph{dedicated hardware}. It's more expensive on the other hand more secure too. By using a dedicated machine for appliances owned by one user only brings another layer how to secure the data. Also some providers can offer an option to let the user be responsible over the \emph{hypervisor} too. In addition with running appliances on dedicated hardware makes the customer in complete control over the leased infrastructure.
+
+\subsubsection{Bare metal servers}
+\label{subs:Bare metal servers}
+
+There's also an option \,--\, offered only by a minority of companies, to use the cloud to provide so called \emph{bare metal servers}. This means a completely different approach than cloud is known for. While user wants to keep his data super secure and isolated yet in stable, reliable and affordable environment it's possible to order a specific physical rack and run the customer's server there. Basically this approach recalls a kind of server housing with benefits of the cloud.
+
 
 
 \chapter{ManageIQ}
