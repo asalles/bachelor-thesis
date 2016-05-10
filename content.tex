@@ -91,6 +91,18 @@ Among others the IBM company also offers their own cloud solution the so called 
 \section{Components}
 \label{sec:Components}
 
+Before elaborating the bindings and APIs it is necessary to introduce and describe the main and most important ares of IaaS clouds with focus on the \textbf{IBM SoftLayer}. The most notable parts that are required to know are listed below. Each user deploying his machine in cloud needs to decide following:
+
+\begin{itemize}
+	\item Where to place the machine?
+	\item How is the virtualization is encapsulated?
+	\item What are the resources available for purchased instance?
+	\item Which software, operating systems are run and how to preserve data?
+	\item How are the machines connected one to another?
+\end{itemize}
+
+Understanding these topics is essential for a customer to be able to successfully deploy his appliance.
+
 \subsection{Regions, Zones and Data centers}
 \label{sub:Regions, Zones and Data centers}
 
@@ -136,7 +148,7 @@ There's also an option, offered only by a minority of companies, to use the clou
 \subsection{Flavors}
 \label{sub:Flavors}
 
-Once the customer knows where the virtual machine should be run and what kind of virtualization the deployed setup requires, it's worth choosing the hardware (no matter if virtual or physical). For instance this specification involves aspects like the processor cores count and frequency, amount of memory available for the device or how data are being stored \,--\, if data are stored on a local hard drive or available via network, what type of hard drive it should be, how many of them are attached, what should be their capacity etc. All these aspects can be specified manually and in special cases they are. The more common work flow is to store the favorite setups as \emph{flavors}. Each cloud provider also offers some default ones. For example the Table~\ref{tab:IBM SoftLayer default flavors} below describes the default \emph{flavors} used in the \textbf{IBM SoftLayer} cloud.
+Once the customer knows where the virtual machine should be run and what kind of virtualization the deployed setup requires, it's worth choosing the hardware resources (no matter if virtual or physical). This specification involves aspects like the processor cores count and frequency, amount of memory available for the device or how data are being stored \,--\, if data are stored on a local hard drive or available via network, what type of hard drive it should be, how many of them are attached, what should be their capacity etc. All these aspects can be specified manually and in special cases they are. The more common work flow is to store the favorite setups as \emph{flavors}. Each cloud provider also offers some default ones. For example the Table~\ref{tab:IBM SoftLayer default flavors} below describes the default \emph{flavors} used in the \textbf{IBM SoftLayer} cloud.
 
 \begin{table}[ht]
 	\centering
@@ -154,10 +166,10 @@ Once the customer knows where the virtual machine should be run and what kind of
 	\caption{IBM SoftLayer default flavors}\label{tab:IBM SoftLayer default flavors}
 \end{table}
 
-\subsection{Images and snapshots}
-\label{sub:Images and snapshots}
+\subsection{Images, templates and snapshots}
+\label{sub:Images, templates and snapshots}
 
-\emph{Images} are used in order to replicate a virtual server running in cloud, store setups or deploy preconfigured systems. These can be created basically in two possible ways. The provider can produce some basic images with operating systems based on the default installation setups adjusted to reflect the cloud specific features, configurations, etc. Such images can provide also a preconfigured application setup or platforms. As being said these images are usually prepared by the provider to facilitate initial setups for the customer. Of course the user can deploy such images on his own too but since this type of images is containing a default configuration it's much convenient for the customer to be provided by them. There's also a second way how to create an image. There's a possibility to create a \emph{snapshot} of running virtual machine. This is pretty essential feature for each cloud \,--\, prepare a setup and save it as an image for backup and redeployment purposes. User usually wants to scale his infrastructure and distribute it around the world in different regions or providers. By producing snapshots of his running virtual machines or uploading his own preconfigured ones it's easy to preserve state, data and environment and deploy, copy the instance, elsewhere. These image and snapshots created by a customer can be flagged as private and available for his own use only. Or there's also a possibility to make such image publicly available for other users of the cloud.
+\emph{Images} are used in order to replicate a virtual server running in cloud, store setups or deploy preconfigured systems. Some cloud providers and managers use a term \emph{Template} instead. They can be created basically in two possible ways. The provider can produce some basic images with operating systems based on the default installation setups adjusted to reflect the cloud specific features, configurations, etc. Such images can provide also a preconfigured application setup or platforms. As being said these templates are usually prepared by the provider to facilitate initial setups for the customer. Of course user can deploy such images on his own too. But since this type of templates are containing a default configuration it's much convenient for the customer to be provided by them. There's also a second way how to create an image. There's a possibility to create a \emph{Snapshot} of running virtual machine. This is pretty essential feature for each cloud \,--\, prepare a setup and save it as an template for backup and redeployment purposes. User usually wants to scale his infrastructure and distribute it around the world in different regions or providers. By producing snapshots of his running virtual machines or uploading his own preconfigured ones it's easy to preserve state, data and environment and deploy, copy the instance, elsewhere. These image and snapshots created by a customer can be flagged as private and available for his own use only. Or there's also a possibility to make such template publicly available for other users of the cloud.
 
 \subsection{Networking}
 \label{sub:Networking}
