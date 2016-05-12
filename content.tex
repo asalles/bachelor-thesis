@@ -507,15 +507,48 @@ In each Region there are specific \emph{Images} available. There are \emph{Publi
 	\end{tabular}
 \end{table}
 
-\subsection{Provision}
-\label{sub:Provision}
-
 \subsection{Tags}
 \label{sub:Tags}
 
 On of the most important aspects of \textbf{ManageIQ} is the capability to \emph{Tag} user's devices across providers and types. \textbf{IBM SoftLayer} also offers tagging capabilities. Each virtual machine can be tagged and labeled. And not only one label can be applied on the device. The same works for the \textbf{ManageIQ} too. In contrary this provider offers such functionality just for provisioned appliances, but not for other types of devices like \emph{Cloud networks}, \emph{Network routers} or \emph{Images}. This makes the import of tags form provider less efficient. There's also another problem that blocks the correct usage of tags in the cloud manager.
 
 The issue is that \textbf{ManageIQ} currently does not offer a way how to propagate tag changes into the provider. So in situation when user modifies tags of a server int he cloud manager and then wants to refresh the provider, old \emph{Tags} are imported again and his changes are overwritten. Due to this fact the tags are currently being ignored and skipped during refresh and discovery.
+
+\clearpage
+\subsection{Provision}
+\label{sub:Provision}
+
+The default provision model used in \textbf{ManageIQ} is \emph{Cloning}. But it does not refer to cloning in a sense of replicating an already available instance. It is used for the \emph{Image} deployment into a new \emph{Virtal Machine}.
+The work flow basically follows the standard form used by the \texttt{fog-softlayer} seen in the Code~\ref{code:fog_compute}. The user select via web UI the desired \emph{Image}, specifies \emph{Flavor}, \emph{Cloud Subnetworks} and declares the name and domain to use for the newly created device.
+
+The code in the back end then proceeds user input and based on his selection prepares a \texttt{cloning\_options} hash. The source code bellow describes a function to prepare such data for \textbf{IBM Softlayer}.
+
+\begin{lstlisting}[language=Ruby,caption={Prepare cloning options},label=code:cloning,float=htpb]
+def prepare_for_clone_task
+  clone_options = super
+  ems = source.try(:ext_management_system)
+  vlan_id = get_option(:cloud_network)
+  # NOTE: Private vlan is represented in the provisioning form
+	# as a :cloud_subnet (rendered as a same type so there's no
+	# need for a new specialized field)
+  private_vlan_id = get_option(:cloud_subnet)
+
+  # NOTE: Cloning might fail for some images due to missing base
+	# OS (in the image). This information is not available via API,
+	# it's safe to use own images though.
+  additional_options = {
+    :flavor_id    => instance_type.name,
+    :image_id     => source.uid_ems,
+    :name         => dest_name,
+    :domain       => get_option(:vm_domain),
+    :datacenter   => ems.provider_region,
+    :vlan         => find_cloud_network_in_vmdb(vlan_id),
+    :private_vlan => find_cloud_network_in_vmdb(private_vlan_id),
+  }
+
+  clone_options.merge(additional_options)
+end
+\end{lstlisting}
 
 \section{Network Manager}
 \label{sec:Network Manager}
