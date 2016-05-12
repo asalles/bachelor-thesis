@@ -336,6 +336,29 @@ Besides all the entities and submodules described below this manager specifies a
 \subsection{Cloud refresh}
 \label{sub:Cloud refresh}
 
+To run a discovery service or refresh of the provider the \emph{Cloud Refresh} namespace has to be defined. This is the most important class for each manager. It covers the import and mapping of every supported entity which is watched by the manager. The \emph{Refresh} procedure itself is defined and proceed in three separate phases:
+
+\begin{itemize}
+	\item \texttt{:Refresher}
+	\item \texttt{:RefreshWorker} and \texttt{:Runner}
+	\item \texttt{:RefreshParser}
+\end{itemize}
+
+\subsubsection{Refresher}
+\label{subs:Refresher}
+
+The \texttt{:Refresher} specifies the work flow of the refresh. It tells the \textbf{ManageIQ} what refresh should be run, how to store all discovered appliances and which database schemes and tables should be affected. The major issue which this class takes care of is to identify to which provider the devices belongs to. This refresher when initiated also queues a refresh next refresh of the providers \emph{Network Manager}.
+
+\subsubsection{Refresh worker}
+\label{subs:Refresh worker}
+
+The worker is a specification of the way how import is proceed. Normally none modifications to the standard process is required. So it is for this provider. Each provider needs a \texttt{:RefreshWorker} in order to register the run of refresh. The naming conventions and scheme of \textbf{ManageIQ} requires also the \texttt{:Runner} sub-class to be defined. Both of them inherits all the functionality from the base cloud manager's refresh worker.
+
+\subsubsection{Refresh Parser}
+\label{subs:Refresh Parser}
+
+This class is the most important part of the refresh process. It defines which devices are added and where these should be registered in \textbf{ManageIQ}. Here it is specified how the mapping of each of the following entities is done between provider client library (in the case of \textbf{IBM SoftLayer} it is \texttt{fog-softlayer}) and the internal structure. Also the mapping where to store these information is done (whether the devide is \emph{Virtual server} or \emph{Flavor} etc.).
+
 \subsection{Availability Zones}
 \label{sub:Availability Zones}
 
