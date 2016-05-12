@@ -292,22 +292,73 @@ new_instance.id
 \chapter{ManageIQ}
 \label{chap:ManageIQ}
 
-A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} brought some standardized API, covered functionality which should be offered for every such provided technology and integrated framework.
+A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} provides abstract internal bindings.
 
-\section{Available interfaces}
-\label{sec:Available interfaces}
+\section{Internal principles}
+\label{sec:Internal principles}
 
-\chapter{Implementation}
-\label{chap:Implemented scheme}
+\chapter{Implemented interfaces}
+\label{chap:Implemented interfaces}
 
-As expected \textbf{ManageIQ} offers a namespace to bind the desired functionality.
+\section{Common interface}
+\label{sec:Common interface}
 
-\subsection{Cloud Manager}
-\label{sub:Cloud Manager}
+\subsection{Connection management}
+\label{sub:Connection management}
 
+\subsection{Discovery}
+\label{sub:Discovery}
 
+\subsection{Regions}
+\label{sub:Regions}
 
-\subsection{Network Manager}
-\label{sub:Network Manager}
+\section{Cloud Manager}
+\label{sec:Cloud Manager}
+
+\subsection{Cloud refresh}
+\label{sub:Cloud refresh}
+
+\subsection{Availability Zones}
+\label{sub:Availability Zones}
+
+\subsection{Authentication key pairs}
+\label{sub:Authentication key pairs}
+
+\subsection{Flavors}
+\label{sub:Flavors}
+
+\subsection{Virtual machines}
+\label{sub:Virtual machines}
+
+\subsection{Image templates}
+\label{sub:Image templates}
+
+\subsection{Provision}
+\label{sub:Provision}
+
+\section{Network Manager}
+\label{sec:Network Manager}
+
+\subsection{Network refresh}
+\label{sub:Network refresh}
+
+\subsection{Cloud networks}
+\label{sub:Cloud networks}
+
+\subsection{Cloud subnetworks}
+\label{sub:Cloud subnetworks}
+
+\subsection{Network routers}
+\label{sub:Network routers}
+
+\subsection{Network ports}
+\label{sub:Network ports}
+
+\section{Register a provider}
+\label{sec:Register a provider}
+
+\section{Front-end}
+\label{sec:Front-end}
+
 
 In order to connect and visualize relations of discovered devices ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
