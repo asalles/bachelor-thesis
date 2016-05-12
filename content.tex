@@ -292,7 +292,7 @@ new_instance.id
 \chapter{ManageIQ}
 \label{chap:ManageIQ}
 
-A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} provides abstract internal bindings.
+A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} provides abstract internal bindings that should suit most of the needs.
 
 \section{Internal principles}
 \label{sec:Internal principles}
@@ -315,6 +315,24 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 \section{Cloud Manager}
 \label{sec:Cloud Manager}
 
+\emph{Cloud Manager} is a class specified for each provider and inherits from base \texttt{CloudManager}. In this case specified as \texttt{ManageIQ::Providers::Softlayer::CloudManager}. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
+
+Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual machine}'s power operations. It also specifies how the \emph{NetworkManager} is related and delegates networking tasks into this manager.
+
+% Nested sub-classes available and implemented by the \emph{CloudManager}:
+%
+% \begin{itemize}
+% 	\item \texttt{:AvailabilityZone}
+% 	\item \texttt{:Flavor}
+% 	\item \texttt{:RefreshParser}
+% 	\item \texttt{:RefreshWorker}
+% 	\item \texttt{:Refresher}
+% 	\item \texttt{:Vm}
+% 	\item \texttt{:Template}
+% 	\item \texttt{:Provision}
+% 	\item \texttt{:ProvisionWorkflow}
+% \end{itemize}
+
 \subsection{Cloud refresh}
 \label{sub:Cloud refresh}
 
@@ -335,6 +353,13 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 
 \subsection{Provision}
 \label{sub:Provision}
+
+\subsection{Tags}
+\label{sub:Tags}
+
+On of the most important aspects of \textbf{ManageIQ} is the capability to \emph{Tag} user's devices across providers and types. \textbf{IBM SoftLayer} also offers tagging capabilities. Each virtual machine can be tagged and labeled. And not only one label can be applied on the device. The same works for the \textbf{ManageIQ} too. In contrary this provider offers such functionality just for provisioned appliances, but not for other types of devices like \emph{Cloud networks}, \emph{Network routers} or \emph{Images}. This makes the import of tags form provider less efficient. There's also another problem that blocks the correct usage of tags in the cloud manager.
+
+The issue is that \textbf{ManageIQ} currently does not offer a way how to propagate tag changes into the provider. So in situation when user modifies tags of a server int he cloud manager and then wants to refresh the provider, old \emph{Tags} are imported again and his changes are overwritten. Due to this fact the tags are currently being ignored and skipped during refresh and discovery.
 
 \section{Network Manager}
 \label{sec:Network Manager}
@@ -359,6 +384,9 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 
 \section{Front-end}
 \label{sec:Front-end}
+
+\section{Not implemented functionality}
+\label{sec:Not implemented functionality}
 
 
 In order to connect and visualize relations of discovered devices ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
