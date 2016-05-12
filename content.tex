@@ -319,20 +319,6 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 
 Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual machine}'s power operations. It also specifies how the \emph{NetworkManager} is related and delegates networking tasks into this manager.
 
-% Nested sub-classes available and implemented by the \emph{CloudManager}:
-%
-% \begin{itemize}
-% 	\item \texttt{:AvailabilityZone}
-% 	\item \texttt{:Flavor}
-% 	\item \texttt{:RefreshParser}
-% 	\item \texttt{:RefreshWorker}
-% 	\item \texttt{:Refresher}
-% 	\item \texttt{:Vm}
-% 	\item \texttt{:Template}
-% 	\item \texttt{:Provision}
-% 	\item \texttt{:ProvisionWorkflow}
-% \end{itemize}
-
 \subsection{Cloud refresh}
 \label{sub:Cloud refresh}
 
@@ -413,6 +399,7 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 	\end{tabular}
 \end{table}
 
+\clearpage
 \subsection{Flavors}
 \label{sub:Flavors}
 
@@ -498,6 +485,27 @@ Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pau
 
 \subsection{Image templates}
 \label{sub:Image templates}
+
+In each Region there are specific \emph{Images} available. There are \emph{Public Images} created by other users or made publicly available by the cloud provider. Also there are \emph{Private Images} created just for the needs of the customer. While importing them, we need to distinguish which images does belong to what category. Also there are other aspects that would be great to categorize. Unfortunately, this is not available via staging APIs. For example we would like to be able to categorize image by operating system or designated and required disk space. It would be also helpful to differentiate which images are available for purchase and which are already old and their base operating system image is already missing. Currently none of these functionality is available via API and just the basic data is available. Because of the defect mentioned above he additional features were not been implemented. The mapping used for images can be seen below.
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Images} attributes mapping}\label{tab:Images attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute                     & Corresponding value                                                        \\
+		\midrule
+		ID                            & \texttt{image.id}                                                          \\
+		\texttt{:type}                & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::Template.name} \\
+		\texttt{:uid\_ems}            & \texttt{image.id}                                                          \\
+		\texttt{:ems\_ref}            & \texttt{image.id}                                                          \\
+		\texttt{:name}                & \texttt{image.name}                                                        \\
+		\texttt{:vendor}              & \texttt{``softlayer''}                                                     \\
+		\texttt{:tempalte}            & \texttt{true}                                                              \\
+		\texttt{:publicly\_available} & \texttt{image.public?}                                                     \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \subsection{Provision}
 \label{sub:Provision}
