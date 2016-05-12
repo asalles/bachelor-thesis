@@ -147,8 +147,8 @@ The opposite option is to reserve a \emph{dedicated hardware}. It's more expensi
 
 There's also an option, offered only by a minority of companies, to use the cloud to provide so called \emph{bare metal servers}. This means a completely different approach than cloud is known for. While user wants to keep his data super secure and isolated yet in stable, reliable and affordable environment it's possible to order a specific physical rack and run the customer's server there. Basically this approach recalls a kind of server housing with benefits of the cloud.
 
-\subsection{Flavors}
-\label{sub:Flavors}
+\subsection{Hardware flavors}
+\label{sub:Hardware flavors}
 
 Once the customer knows where the virtual machine should be run and what kind of virtualization the deployed setup requires, it's worth choosing the hardware resources (no matter if virtual or physical). This specification involves aspects like the processor cores count and frequency, amount of memory available for the device or how data are being stored, if data are stored on a local hard drive or available via network, what type of hard drive it should be, how many of them are attached, what should be their capacity etc. All these aspects can be specified manually and in special cases they are. The more common work flow is to store the favorite setups as \emph{flavors}. Each cloud provider also offers some default ones. For example the Table~\ref{tab:IBM SoftLayer default flavors} below describes the default \emph{flavors} used in the \textbf{IBM SoftLayer} cloud.
 
@@ -400,7 +400,7 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Authentication key pairs} attributes mapping}\label{tab:uthentication key pairs attributes mapping}
+	\caption{\emph{Authentication key pairs} attributes mapping}\label{tab:Authentication key pairs attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute             & Corresponding value                                                           \\
@@ -415,6 +415,40 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 
 \subsection{Flavors}
 \label{sub:Flavors}
+
+What \emph{Flavors} are was already discussed if Flavors~\ref{sub:Hardware flavors}. \emph{Fog} allows to list all available \emph{Flavors} via \texttt{compute.flavors.all} command. The Code~\ref{code:fog_flavors}. All data available about the flavor ale listed in plain format except the disk sizes. The total size has to be counted for each \emph{Flavor} separately by summing sizes of all available disks.
+
+\begin{lstlisting}[language=Ruby,caption={Sample of \emph{Flavors} data},label=code:fog_flavors,float=htpb]
+# Fetch Flavors from SoftLayer
+compute.flavors.first
+=>   <Fog::Compute::Softlayer::Flavor
+    id="m1.tiny",
+    cpu=1,
+    disk=[{"device"=>0, "diskImage"=>{"capacity"=>25}}],
+    name="Tiny Instance",
+    ram=1024
+  >
+\end{lstlisting}
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Flavors} attributes mapping}\label{tab:Flavors attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute                  & Corresponding value                                                      \\
+		\midrule
+		ID                         & \texttt{flavor.id}                                                       \\
+		\texttt{:type}             & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::Flavor.name} \\
+		\texttt{:ems\_ref}         & \texttt{flavor.id}                                                       \\
+		\texttt{:name}             & \texttt{flavor.id}                                                       \\
+		\texttt{:description}      & \texttt{flavor.name}                                                     \\
+		\texttt{:cpus}             & \texttt{flavor.cpu}                                                      \\
+		\texttt{:cpu\_cores}       & \texttt{flavor.cpu}                                                      \\
+		\texttt{:memory}           & \texttt{flavor.ram * 1.megabyte}                                         \\
+		\texttt{:root\_disk\_size} & Counted separately, data taken from \texttt{flavor.disk}                 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \subsection{Virtual machines}
 \label{sub:Virtual machines}
