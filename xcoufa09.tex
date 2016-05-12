@@ -18,7 +18,23 @@
 % another custom packages goes here
 \usepackage{booktabs}
 
+\usepackage[dvipsnames]{xcolor}
+\usepackage{textcomp}
 \usepackage{listings}
+
+\definecolor{softgray}{rgb}{0.9,0.9,0.9}
+\lstloadlanguages{Ruby}
+\renewcommand{\lstlistingname}{Code}
+\lstset{ basicstyle      = \ttfamily\color{black},
+         commentstyle    = \ttfamily\color{OliveGreen},
+         keywordstyle    = \ttfamily\color{NavyBlue},
+         stringstyle     = \color{BurntOrange},
+         frame           = single,
+         upquote         = true,
+         columns         = fullflexible,
+         keepspaces      = true,
+         tabsize         = 2}
+
 \usepackage[toc,page,header]{appendix}
 \RequirePackage{titletoc}
 

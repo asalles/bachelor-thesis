@@ -154,6 +154,7 @@ Once the customer knows where the virtual machine should be run and what kind of
 
 \begin{table}[ht]
 	\centering
+	\caption{IBM SoftLayer default flavors}\label{tab:IBM SoftLayer default flavors}
 	\begin{tabular}{llrrrr}
 		\toprule
 		Identifier & Name                 & CPU cores & Memory (RAM) & Hard drives (HDD)     \\
@@ -165,7 +166,6 @@ Once the customer knows where the virtual machine should be run and what kind of
 		m1.xlarge  & Extra Large Instance & 16        & 16\,GB       & 1 $\times$ 1\,000\,GB \\
 		\bottomrule
 	\end{tabular}
-	\caption{IBM SoftLayer default flavors}\label{tab:IBM SoftLayer default flavors}
 \end{table}
 
 \subsection{Images, templates and snapshots}
@@ -197,6 +197,97 @@ A part from the attached devices and addresses each network needs its \emph{Netw
 
 \section{API access}
 \label{sec:API access}
+
+For managing purposes each cloud provider has it's own web interface. Such tool usually contains all needed functionality: visualization of leased devices and machines, networking adjustments, provisioning of new appliances, creating snapshots, viewing spendings and other billing information.
+
+On the other hand once more advanced user wants to automate his work flows or create scripts to handle some of his common tasks an API is needed. There are numerous different libraries allowing a user to connect to the provider. In this case it is essential to focus on the \textbf{IBM SoftLayer} provider with respect to the needs and capabilities of \textbf{ManageIQ}.
+
+\subsection{Standard REST API}
+\label{sub:Standard REST API}
+
+The standard way offered by the provider is to use the \textbf{IBM SoftLayer}'s \emph{REST API}~\cite{restapi}. This extensive API offers a complete access to all features of the cloud infrastructure. It is a low level standard defining how to communicate with the cloud, how to format requests and what responses should be expected etc. The major advantages of the API is in its complexity and independence on programming language.
+
+\subsubsection{User authentication}
+\label{subs:User authentication}
+
+When user is managing the cloud services via web tool, the normal and most common way to identify himself is to use \emph{username} and \emph{password}. While using APIs the situation is a bit different. And each cloud define the way on their own. \textbf{Google Compute Engine} requires to specify the \emph{Project} name, user email and then use a special \emph{Google JSON key} which is basically a project specific certificate for the user. The \textbf{Amazon web services EC2} cloud use a generated pair of \emph{Access key ID} and a \emph{Secret Access key}. And when it comes to the \textbf{IBM SoftLayer} the factors used for authentication involves the normal \emph{User ID} and a specially generated \emph{Secret API key}.
+
+\subsubsection{Language bindings}
+\label{subs:Language bindings}
+
+This API pretty simple and low level in the aspect of connection handling and abstract operations. For better integration of this API into user projects the derived libraries has been built upon it to offer bindings and object based interface for different programing languages. Since \textbf{ManageIQ} is written in \emph{Ruby} we should focus on and elaborate the libraries created for this programming language.
+
+\subsection{Softlayer API for Ruby}
+\label{sub:Softlayer-API}
+
+First of them is a \emph{SoftLayer API} brought by the SoftLayer developers~\cite{softlayer_api}. This library provides a Ruby Gem packages named \texttt{softlayer\_api}. It offers a complex documentation and is designed for easy to use work flows. The code however is not much structured and organized.
+
+\subsection{Fog the Ruby cloud service library}
+\label{sub:Fog cloud library}
+
+There's also a \texttt{fog-softlayer} gem, a \emph{Fog} library for this provider. \emph{Fog} is a cloud service library for Ruby available for many different providers across market. This makes the Gem easily understandable and compatible with other providers. It is also much simpler to maintain the structure and follow a pattern of other providers already available in the \textbf{ManageIQ} which are also implemented via \emph{Fog}. This library also offers extensive documentation (for \emph{Fog} in general) and example code for the \texttt{fog-softlayer} covering the desired functionality.
+
+To compare the \texttt{fog-softlayer} with \texttt{softlayer\_api} the services and objects are more structured here. They are kept and managed via 5 basic services. These services can operate separately.
+
+\begin{itemize}
+	\item \texttt{Fog::Account} accessing customer account's organization if they are grouped with others
+	\item \texttt{Fog::Compute} is the most important service allowing user to control servers (monitoring, provisioning, deployment, creating snapshots and more)
+	\item \texttt{Fog::Network} offers bindings to manage cloud networks, subnets, routers, etc.
+	\item \texttt{Fog::DNS} for managing DNS records
+	\item \texttt{Fog::Storage} provides connection to \emph{Bluemix} storage service
+\end{itemize}
+
+Each of the services has its own purpose but the most important in a sense of cloud management is the \texttt{Fog::Compute} and \texttt{Fog::Network}. By using just these two user can easily manage his running appliances and deploy new ones. The code sample~\ref{code:fog_compute} shows the basic work flow for listing running servers and how to provision a new one.
+
+\begin{lstlisting}[language=Ruby,caption={Example work flow for Fog SoftLayer},label=code:fog_compute,float=htpb]
+require "fog/softlayer"
+
+# Specify the provider and credentials
+options = {
+  :provider => "softlayer",
+  :softlayer_username => "<username>",
+  :softlayer_api_key  => "<api_key>"
+}
+
+# Connect to the Compute service
+compute = ::Fog::Compute.new(options)
+
+# lookup all provisioned servers
+compute.servers.all
+
+=>   <Fog::Compute::Softlayer::Servers
+    [ <Fog::Compute::Softlayer::Server
+        id=17784479,
+        name="centos",
+        domain="example.com",
+        fqdn="centos.example.com",
+        cpu=1,
+        ram=1024,
+        # etc.
+      >,
+			# other servers
+    ]
+  >
+
+# get the first server and check its state
+server = compute.servers.get(17784479)
+server.state
+
+=> 'Running'
+
+# provision a new instance from image
+provison_options = {
+    :flavor_id => "m1.small",
+    :image_id  => "1394bf94-e4e5-43bf-90ec-5eedbdcc420d",
+    :name      => "ubuntu",
+		:domain    => "example.com",
+    :datacenter => "ams01"
+}
+new_instance = compute.servers.create(provision_options)
+new_instance.id
+
+=> 17784894
+\end{lstlisting}
 
 \chapter{ManageIQ}
 \label{chap:ManageIQ}
