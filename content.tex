@@ -380,21 +380,38 @@ a_zones = [default_zone]
 
 \begin{table}[ht]
 	\centering
-	\caption{Availability Zone attributes mapping}\label{tab:Availability Zone attributes mapping}
+	\caption{\emph{Availability Zone} attributes mapping}\label{tab:Availability Zone attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute          & Corresponding value                                                               \\
+		Attribute          & Corresponding value                                                                \\
 		\midrule
-		ID                 & \texttt{availability\_zone.id.downcase}                                           \\
-		\texttt{:type}     & \small\texttt{``ManageIQ::Providers::Softlayer::CloudManager::AvailabilityZone''} \\
-		\texttt{:ems\_ref} & \texttt{availability\_zone.id.downcase}                                           \\
-		\texttt{:name}     & \texttt{availability\_zone.name}                                                  \\
+		ID                 & \texttt{availability\_zone.id.downcase}                                            \\
+		\texttt{:type}     & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::AvailabilityZone.name} \\
+		\texttt{:ems\_ref} & \texttt{availability\_zone.id.downcase}                                            \\
+		\texttt{:name}     & \texttt{availability\_zone.name}                                                   \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \subsection{Authentication key pairs}
 \label{sub:Authentication key pairs}
+
+Since \textbf{ManageIQ} aims to completely manage over different providers besides monitoring purposes it is essential to provide user with possibility to connect to the machine. While there are any \emph{Authentication key pairs} attached to the device this is the class which takes care of them. Each key pair when created contains a name and and fingerprint. This provider specifies the key par with label as a name and a certificate as a fingerprint. Fetching \emph{Authentication key pairs} from provider is easy via \emph{Fog} by a simple run of \texttt{compute.key\_pairs.all} command.
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Authentication key pairs} attributes mapping}\label{tab:uthentication key pairs attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute             & Corresponding value                                                           \\
+		\midrule
+		ID                    & \texttt{key\_pair.id}                                                         \\
+		\texttt{:type}        & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::AuthKeyPair.name} \\
+		\texttt{:name}        & \texttt{key\_pair.label}                                                      \\
+		\texttt{:fingerprint} & \texttt{key\_pair.key}                                                        \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \subsection{Flavors}
 \label{sub:Flavors}
