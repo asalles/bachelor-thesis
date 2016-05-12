@@ -453,6 +453,49 @@ compute.flavors.first
 \subsection{Virtual machines}
 \label{sub:Virtual machines}
 
+This is the most important commodity that has being imported and discovered. Each \emph{Virtual Machine} caries information about its name, domain, hardware configuration and even \emph{Flavor}, \emph{Image} which it is based upon or \emph{Authentication key pairs} attached. The attribute mapping is described in Table~\ref{tab:Virtual Machine attributes mapping}. Every attribute listed is successfully mapped except the \emph{Disks} discovery. The \emph{Softlayer API} described in the Subsection~\ref{sub:Standard REST API} provides every piece of information needed except the effective disk size. Currently it's been decided to wait until the support for this value is in place. For now no disks are mapped for any \emph{Virtual Machine} in this provider but the functionality is prepared so once these data are available, it can be easily updated.
+
+Each \emph{Virtual Machine} once mapped into the \textbf{ManageIQ} offers an interface for its power management. This management also has to be binded to propagate the requests into the provider. This is done via sub-class \texttt{:VM} and its management modules \texttt{:Operations::Power} and \texttt{:Operations::Guest}. \textbf{IBM Softlayer} and \texttt{fog-softlayer} allows to:
+
+\begin{itemize}
+	\item Switch of the instance via \texttt{instace.stop}
+	\item Turn back on using \texttt{instance.start}
+	\item Reboot the appliance by \texttt{instance.reboot}
+	\item And finally terminate it by invoking the \texttt{instance.destroy} command
+\end{itemize}
+
+Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pause} or \emph{Hibernate} the instance.
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Virtual Machine} attributes mapping}\label{tab:Virtual Machine attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute                         & Corresponding value                                                  \\
+		\midrule
+		ID                                & \texttt{instance.id.to\_s}                                           \\
+		\texttt{:type}                    & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::VM.name} \\
+		\texttt{:uid\_ems}                & \texttt{instance.id.to\_s}                                           \\
+		\texttt{:ems\_ref}                & \texttt{instance.id.to\_s}                                           \\
+		\texttt{:name}                    & \texttt{``\#{instance.name}.\#{instance.domain}''}                   \\
+		\texttt{:vendor}                  & \texttt{``softlayer''}                                               \\
+		\texttt{:raw\_power\_state}       & \texttt{instance.state}                                              \\
+		\texttt{:flavor}                  & \texttt{instance.flavor\_id}                                         \\
+		\texttt{:operating\_system}       & \texttt{{:product\_name => instance.os\_code}}                       \\
+		\texttt{:availability\_zone}      & Fetched the defaulf \emph{Availability Zone} from data storage       \\
+		\texttt{:key\_pairs}              & Fetched from data storage                                            \\
+		\midrule
+		\multicolumn{2}{l}{Hash for \texttt{:hardware} information}                                              \\
+		\midrule
+		\texttt{:cpu\_sockets}            & \texttt{instance.cpu}                                                \\
+		\texttt{:cpu\_total\_cores}       & \texttt{instance.cpu}                                                \\
+		\texttt{:cpu\_cores\_per\_socket} & 1                                                                    \\
+		\texttt{:memory\_mb}              & \texttt{instance.ram}                                                \\
+		\texttt{:disks}                   & Not effectively populated                                            \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 \subsection{Image templates}
 \label{sub:Image templates}
 
