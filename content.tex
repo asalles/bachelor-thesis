@@ -362,6 +362,37 @@ This class is the most important part of the refresh process. It defines which d
 \subsection{Availability Zones}
 \label{sub:Availability Zones}
 
+As we elaborated in the Subsection~\ref{sub:Regions, Zones and Data centers}, there are no sufficient \emph{Availability Zones} present in \textbf{IBM SoftLayer}. On the other hand each cloud manager requires a \emph{Zone} to be defined. To satisfy this need the new default zone has been created. It does not effect any operation over the provider but for the internal needs of the data hierarchy inside \textbf{ManageIQ}'s database it is present.
+
+To preserve the naming conventions of \textbf{ManageIQ} even in this case it is required to use two separate mapping functions. The first one, normally used to fetch data from provider, now creates a list containing one element, the default zone. Then it lets to parse it via the second function and store it into the designated place. It's been used a modified instance of \texttt{Fog::Model} as the default zone~\ref{code:fog_model_zone}. This approach has been used instead of defining a special class for the zone because there is no need to have such class available in the namespace. There is always going to be only one instance present in total and only during the refresh.
+
+\begin{lstlisting}[language=Ruby,caption={Declaration of the default \emph{Availability Zone}},label=code:fog_model_zone,float=htpb]
+# Create new fog model
+default_zone = ::Fog::Model.new
+
+# Inject methods for :name and :id to return default values for provider
+{:name => @ems.name, :id => 'default'}.each do |method, value|
+  default_zone.define_singleton_method(method) { value }
+end
+
+a_zones = [default_zone]
+\end{lstlisting}
+
+\begin{table}[ht]
+	\centering
+	\caption{Availability Zone attributes mapping}\label{tab:Availability Zone attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute          & Corresponding value                                                               \\
+		\midrule
+		ID                 & \texttt{availability\_zone.id.downcase}                                           \\
+		\texttt{:type}     & \small\texttt{``ManageIQ::Providers::Softlayer::CloudManager::AvailabilityZone''} \\
+		\texttt{:ems\_ref} & \texttt{availability\_zone.id.downcase}                                           \\
+		\texttt{:name}     & \texttt{availability\_zone.name}                                                  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 \subsection{Authentication key pairs}
 \label{sub:Authentication key pairs}
 
