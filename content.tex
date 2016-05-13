@@ -267,8 +267,7 @@ compute.servers.all
         # etc.
       >,
 			# other servers
-    ]
-  >
+    ] >
 
 # get the first server and check its state
 server = compute.servers.get(17784479)
@@ -313,6 +312,7 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 \subsection{Regions}
 \label{sub:Regions}
 
+\clearpage
 \section{Cloud Manager}
 \label{sec:Cloud Manager}
 
@@ -387,7 +387,7 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Authentication key pairs} attributes mapping}\label{tab:Authentication key pairs attributes mapping}
+	\caption{\emph{Authentication key pair} attributes mapping}\label{tab:Authentication key pair attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute             & Corresponding value                                                           \\
@@ -400,7 +400,6 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 	\end{tabular}
 \end{table}
 
-\clearpage
 \subsection{Flavors}
 \label{sub:Flavors}
 
@@ -420,7 +419,7 @@ compute.flavors.first
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Flavors} attributes mapping}\label{tab:Flavors attributes mapping}
+	\caption{\emph{Flavor} attributes mapping}\label{tab:Flavor attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute                  & Corresponding value                                                      \\
@@ -491,7 +490,7 @@ In each Region there are specific \emph{Images} available. There are \emph{Publi
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Images} attributes mapping}\label{tab:Images attributes mapping}
+	\caption{\emph{Image} attributes mapping}\label{tab:Image attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute                     & Corresponding value                                                        \\
@@ -551,6 +550,7 @@ def prepare_for_clone_task
 end
 \end{lstlisting}
 
+\clearpage
 \section{Network Manager}
 \label{sec:Network Manager}
 
@@ -634,13 +634,63 @@ While running discovery over a \emph{Cloud network} all related subnetworks are 
 	\end{tabular}
 \end{table}
 
-\subsection{Network routers}
-\label{sub:Network routers}
-
-
 \subsection{Network ports}
 \label{sub:Network ports}
 
+Running the \emph{Network ports} refresh process is the next step in order to complete whole network discovery. \emph{Network ports} are used as a virtual replacement of physical network interfaces. Their data are available via querying each \emph{Virtual machine}. To achieve and access it the refresh process of corresponding \emph{Cloud Manager} has to be run before the \emph{Network Manager}.
+
+Since the \emph{Network subnets} were already discovered using the networks, not it remains only to map them to maintain and register the connection inside \textbf{ManageIQ}. This is done by a special mapping functionality. While specifying a mapping key \\ \texttt{:cloud\_subnet\_network\_ports} in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network subnets}. This is due to \texttt{ManageIQ} internal mapping and database scheme where the information for each \emph{Network port} to \emph{Cloud subnet} relation is stored inside the \emph{Cloud subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network port} on more subnets.
+
+\begin{lstlisting}[language=Ruby,caption={\emph{Network port} to \emph{Cloud subnet} mapping},label=code:port_to_subnet]
+# Using a convertor for a relation in opposite direction
+network_port[:cloud_subnet_network_ports] = [{
+  :address      => network_port.primary_ip_address,
+  :cloud_subnet => @data_index.fetch_path(:cloud_subnets, subnet_id)
+}]
+\end{lstlisting}
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Network port} attributes mapping}\label{tab:Network port attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute              & Corresponding value                                                            \\
+		\midrule
+		ID                     & \texttt{network\_port.id.to\_s}                                                \\
+		\texttt{:type}         & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::NetworkPort''} \\
+		\texttt{:ems\_ref}     & \texttt{network\_port.id.to\_s}                                                \\
+		\texttt{:name}         & \texttt{``\#{network\_port.name}\#{network\_port.port}''} if provided          \\
+		                       & \texttt{network\_port.mac\_address} otherwise                                  \\
+		\texttt{:status}       & \texttt{network\_port.status.downcase}                                         \\
+		\texttt{:mac\_address} & \texttt{network\_port.mac\_address}                                            \\
+		\texttt{:device\_ref}  & \texttt{device\_ref}                                                           \\
+		\texttt{:device}       & \texttt{parent\_manager\_fetch\_path\,(:vms, device\_ref)}                     \\
+		\texttt{:fixed\_ips}   & \texttt{network\_port.primary\_ip\_address}                                    \\
+		\midrule
+		\multicolumn{2}{l}{\texttt{:cloud\_subnet\_network\_ports} --- see the Code~\ref{code:port_to_subnet}} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{Network routers}
+\label{sub:Network routers}
+
+The only remaining network component to import is a \emph{Network router}. Routers are used to manage \emph{Cloud subnets} while each router can handle more than one subnet. They are created only on purpose when user requests a new subnet but does not list it under any present	router. There's not much information provided for the router, but they are a the necessary link between other elements in the network.
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Network router} attributes mapping}\label{tab:Network router attributes mapping}
+	\begin{tabular}{ll}
+		\toprule
+		Attribute          & Corresponding value                                                              \\
+		\midrule
+		ID                 & \texttt{network\_router[``id''].to\_s}                                           \\
+		\texttt{:type}     & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::NetworkRouter''} \\
+		\texttt{:ems\_ref} & \texttt{network\_router[``id''].to\_s}                                           \\
+		\texttt{:name}     & \texttt{network\_router[``hostname'']}                                           \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \section{Register a provider}
 \label{sec:Register a provider}
