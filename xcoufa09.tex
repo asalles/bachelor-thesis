@@ -3,10 +3,9 @@
 % Update: Ing. Jaroslav Dytrych <idytrych@fit.vutbr.cz> (2016)
 % Modified: Tomas Coufal <ixcoufa09@stud.fit.vutbr.cz> (2016)
 
-
-% remove 'print' when building for IS
-% add 'zadani' when zadani is saved
-\documentclass[english,print]{fitthesis}
+\documentclass[english]{fitthesis}
+% add 'print' when rendered for print
+% add 'zadani' when the zadani.pdf should be included.
 
 \usepackage[czech,english]{babel}
 \usepackage[utf8]{inputenc}
@@ -37,13 +36,11 @@
 
 \usepackage[toc,page,header]{appendix}
 \RequirePackage{titletoc}
+\ifczech
+  \usepackage{ae}
+\fi
 
-% Latin Modern Roman as rm
-\renewcommand{\rmdefault}{lmr}
-% TeX Gyre Heros as sf
-\renewcommand{\sfdefault}{qhv}
-% Latin Modern tt as tt
-\renewcommand{\ttdefault}{lmtt}
+\input{pisma.tex}
 
 % Switch off the replacing of quotes
 \csdoublequotesoff
@@ -75,21 +72,26 @@
 \fi
 \fi
 
+%Informace o praci/projektu
+%---------------------------------------------------------------------------
 % Thesis information for the builder
 \projectinfo{
   % Type
-  project={BP},
-  % Date
+  project=BP,
   year=2016,
   date=\today,
+  department=UITS,
   %Title
-  title.cs={Integrace IBM SoftLayer do ManageIQ},
-  title.en={Integration of IBM SoftLayer into ManageIQ},
+  title.cs={Integrace IBM SoftLayer do prostředí ManageIQ},
+  title.en={Integration of IBM SoftLayer into ManageIQ framework},
   %Author
   author={Tomáš Coufal},
-  department=UITS,
+  author.name={Tomáš},
+  author.surname={Coufal},
   %Suprevisor
-  supervisor=Adam Rogalewicz,
+  supervisor={Adam Rogalewicz},
+  supervisor.name={Adam},
+  supervisor.surname={Rogalewicz},
   supervisor.title.p={Mgr.},
   supervisor.title.a={Ph.D.},
 }
@@ -103,9 +105,7 @@
 \keywords[en]{cloud computing, ManageIQ, IBM SoftLayer, Red Hat, cloud providers, fog, Ruby}
 
 % Declaration
-\declaration{Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně pod vedením pana Mgr. Adama Rogalevicze, Ph.D.
-Další informace a zázemí mi poskytli členové vývojářského týmu ManageIQ.
-Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
+\declaration{Hereby I declare that this bachelor's thesis was prepared as an original author’s work under the supervision of Mr. Mgr. Adam Rogalevicz, Ph.D. The supplementary information was provided by members of the ManageIQ developer team. All the relevant information sources, which were used during preparation of this thesis, are properly cited and included in the list of references.}
 
 % ACK
 \acknowledgment{Děkuji společnosti Red Hat Czech, a.s. za poskytnuté zázemí a prostředky pro testování. Velmi si cenním podpory a informací od týmu vývojářů, se kterými jsem mohl svou práci konzultovat. Převáženě si vážím znalostí Martina Povolného a Ladislava Smoly, které mi velmi pomohly a pro řešení práce byly klíčové.}
@@ -118,13 +118,16 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 \tableofcontents
 
 % List of figures and tables
-\listoffigures
-\listoftables
+%\listoffigures
+%\listoftables
 
 % Thesis content
 \input{content}
 
 % Literature
+\makeatletter
+\def\@openbib@code{\addcontentsline{toc}{chapter}{Bibliography}}
+\makeatother
 \bibliographystyle{plain}
 \begin{flushleft}
 	\bibliography{references}
