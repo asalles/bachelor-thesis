@@ -249,8 +249,9 @@ options = {
   :softlayer_api_key  => "<api_key>"
 }
 
-# Connect to the Compute service
+# Connect to the Compute and Network service
 compute = ::Fog::Compute.new(options)
+network = ::Fog::Network.new(options)
 
 # lookup all provisioned servers
 compute.servers.all
@@ -553,20 +554,93 @@ end
 \section{Network Manager}
 \label{sec:Network Manager}
 
+In order to connect and visualize relations of discovered devices ManageIQ brings the class \texttt{NetworkManager}. A separate \emph{Network Manager} is currently a new feature included into \textbf{ManageIQ}. The \textbf{IBM Softlayer} is one of the first provides adapting this structure. The current implementation uses as a default the \emph{Cloud Manager} which is delegating some of the workload onto this manager. This manager has it's own refresh capabilities and the refresh and discovery is it's main purpose. Today neither \textbf{ManageIQ} not \texttt{fog-softlayer} is capable of manipulating with networks. This layer is static for display and monitoring purposes.
+
+The main change while this manager is connecting to the provider's API is it's using the \texttt{Fog::Network} service instead of the \texttt{Fog::Compute}. The connection to this service is made analogically as for the compute service so the following text is referring to the \texttt{network} variable described at Code~\ref{code:fog_compute}.
+
 \subsection{Network refresh}
 \label{sub:Network refresh}
+
+In the core the purpose of \emph{Network refresh} is the same as for the \emph{Cloud refresh}. And the work flow is also the same: this refresh requires the same steps to be implemented (\texttt{:Refresher}, \texttt{:RefreshWorker}, \texttt{:Runner} and \texttt{:RefreshParser}). They provides the same role which has already been explained.
+
+The \texttt{:RefreshParser} is capable of exploration over:
+
+\begin{itemize}
+	\item \emph{Cloud Networks} and \emph{Cloud Subetworks}
+	\item \emph{Network Ports}
+	\item \emph{Network Routers}
+\end{itemize}
+
+Each component's discovery is initiated via call to a corresponding function. In network discovery these functions are registered: \texttt{get\_cloud\_network}, \texttt{get\_network\_ports}, \\ \texttt{get\_cloud\_subnets\,(cloud\_network)} and \texttt{get\_network\_routers}.
 
 \subsection{Cloud networks}
 \label{sub:Cloud networks}
 
+It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Networks}. They are used as a labels without networking attributes yet defining the connection and subnetwork purpose. There exist two types of such networks and according to that a specific sub-class has been created for each of them:
+
+\begin{itemize}
+	\item \texttt{:CloudNetwork::Public} for public networks that interface the Internet and outer connects outside of the data center.
+	\item \texttt{:CloudNetwork::Private} which purpose is to connect the device with each other and with network storage or any other internal service within the data center
+\end{itemize}
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Cloud Network} attributes mapping}\label{tab:Cloud Network attributes mapping}
+	\tabcolsep=4pt
+	\begin{tabular}{ll}
+		\toprule
+		Attribute                 & Corresponding value                                                             \\
+		\midrule
+		ID                        & \texttt{cloud\_network.id.to\_s}                                                \\
+		\texttt{:type}            & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::CloudNetwork''} \\
+		                          & + suffix (\small{\texttt{``::Private''}} or \small{\texttt{``::Public''}})      \\
+		\texttt{:ems\_ref}        & \texttt{cloud\_network.id.to\_s}                                                \\
+		\texttt{:name}            & \texttt{cloud\_network.name} if present or a custom string                      \\
+		                          & \texttt{``Public''} (or \texttt{``Public''}) \texttt{``VLAN on <hostname>''}    \\
+		\texttt{:status}          & \texttt{``active''}                                                             \\
+		\texttt{:cidr}            & \texttt{nil}                                                                    \\
+		\texttt{:enabled}         & \texttt{true}                                                                   \\
+		\texttt{:cloud\_subnets}  & Initiated discovery and fetched the data from local storage                     \\
+		\texttt{:network\_router} & \texttt{cloud\_network.router}                                                  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 \subsection{Cloud subnetworks}
 \label{sub:Cloud subnetworks}
+
+In case of \emph{Cloud Subnets} the situation is a bit more difficult. These networks are not directly displayed via \emph{Fog} like the other network components. However both entities using and interfacing these subnetworks contains desired data. These two entities are \emph{Cloud Networks} and \emph{Network ports}. Each of them provides enough data to register a subnet. It is considered as a better practice while describing components to start from greater picture to smaller parts. The \emph{Cloud Network} can be considered as a bigger and more important component because it can contain more \emph{Network ports} and represents a parent for each \emph{Cloud subnet}.
+
+While running discovery over a \emph{Cloud network} all related subnetworks are discovered too. This behavior is ensured by calling \texttt{get\_cloud\_subnets\,(cloud\_network)} during parsing action for each network. When all subnets are found they are parsed, registered and stored int \textbf{ManageIQ}'s local storage. Later, when the refresh process reaches the \emph{Network ports} discovery, their identificators are found and they can be found in the database and linked to the port.
+
+\begin{table}[ht]
+	\centering
+	\caption{\emph{Cloud Subnetwork} attributes mapping}\label{tab:Cloud Subnetwork attributes mapping}
+	\tabcolsep=1pt
+	\begin{tabular}{ll}
+		\toprule
+		Attribute                    & Corresponding value                                                            \\
+		\midrule
+		ID                           & \texttt{cloud\_subnet.id.to\_s}                                                \\
+		\texttt{:type}               & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::CloudSubnet''} \\
+		\texttt{:ems\_ref}           & \texttt{cloud\_subnet.id.to\_s}                                                \\
+		\texttt{:name}               & \texttt{cloud\_network\_name}                                                  \\
+		\texttt{:cidr}               & \texttt{``\#{cloud\_subnet.network\_id}/\#{subnet.cidr}''}                     \\
+		\texttt{:ip\_version}        & \texttt{cloud\_subnet.ip\_version}                                             \\
+		\texttt{:network\_protocol}  & \texttt{``ipv\#{cloud\_subnet.ip\_version}''}                                  \\
+		\texttt{:gateway}            & \texttt{cloud\_subnet.gateway\_ip}                                             \\
+		\texttt{:availability\_zone} & Fetch the default \emph{Availability Zone}                                     \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \subsection{Network routers}
 \label{sub:Network routers}
 
+
 \subsection{Network ports}
 \label{sub:Network ports}
+
 
 \section{Register a provider}
 \label{sec:Register a provider}
@@ -577,5 +651,5 @@ end
 \section{Not implemented functionality}
 \label{sec:Not implemented functionality}
 
-
-In order to connect and visualize relations of discovered devices ManageIQ brings the class of network manager. \texttt{NetworkManager} In this case the class is declared as \texttt{ManageIQ::Providers::Softlayer::NetworkManager}.
+\chapter{Conclusion}
+\label{chap:Conclusion}
