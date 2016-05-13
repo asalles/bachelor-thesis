@@ -27,14 +27,14 @@ Servers are considered as a base unit that encapsulates all the necessary hardwa
 \subsubsection{Virtualized computing}
 \label{subs:Virtualized computing}
 
-Because of all the disadvantages listed above new approach needs to be invented. To lower the complexity of hardware scaling IT industry moved towards an increase on software difficulty. Unlike hardware maintenance this can be automated easily and requires less resources to deploy. Servers are no more considered as atomic units. The fact that hardware itself can be abstract leads to an invention of \emph{virtualized computing}. The paradigm of virtualization brings virtual machine manager also known as \emph{hypervisor}, a specialized operating system designed to run multiple operating systems as applications. This manager provides the necessary layer that can encapsulate each environment. The isolation of hardware from operating systems makes it possible to run multiple services on one physical machine. Each virtual machine is provided by the resources it needs and when these are left unused hypervisor manages to pass them where is needed.
+Because of all the disadvantages listed above new approach needs to be invented. To lower the complexity of hardware scaling IT industry moved towards an increase on software difficulty. Unlike hardware maintenance this can be automated easily and requires less resources to deploy. Servers are no more considered as atomic units. The fact that hardware itself can be abstract leads to an invention of \emph{virtualized computing}. The paradigm of virtualization brings virtual machine manager also known as \emph{Hypervisor}, a specialized operating system designed to run multiple operating systems as applications. This manager provides the necessary layer that can encapsulate each environment. The isolation of hardware from operating systems makes it possible to run multiple services on one physical machine. Each virtual machine is provided by the resources it needs and when these are left unused hypervisor manages to pass them where is needed.
 
 However when a physical failure appears the situation is the same. The service has to be moved to another device. What differs is the solution. Usually the hypervisors are run in clusters of physical servers where they can cooperate. When one hypervisor is facing a hardware failure the services are smoothly swapped to another physical device, under different hypervisor within the same cluster. This can happened without any outage of service and without the need for running a parallel fallback machine. This flexibility also helps the scalability mentioned above. In case of multiple services running on one physical device, the resources are assinged dynamically and once an application demands more the hypervisor can offer the less loaded virtual machines are transitioned to another server in cluster. This creates an environment where no virtual machines suffers from significant lack of resources.
 
 \subsubsection{Outsourcing the virtualization}
 \label{subs:Outsourcing the virtualization}
 
-The core idea behind virtualization is the same for \emph{cloud computing} as well. A company using a virtualized solution typically owns the physical servers and maintains them on their own. This produces much overhead costs. On the other hand in cloud computing environment there is no need to insist on keeping the infrastructure. The operational responsibilities are shifted to the cloud provider who is responsible for the hardware and its maintenance. Providers offers remotely controlled virtual environment, location independent and highly scalable solution. The advantages of virtual computing sustain, applications are still run in virtual environment, scaled on demand and flexible. The creation of new virtual machines is a matter of minutes and no additional resources are needed.
+The core idea behind virtualization is the same for \emph{Cloud Computing} as well. A company using a virtualized solution typically owns the physical servers and maintains them on their own. This produces much overhead costs. On the other hand in cloud computing environment there is no need to insist on keeping the infrastructure. The operational responsibilities are shifted to the cloud provider who is responsible for the hardware and its maintenance. Providers offers remotely controlled virtual environment, location independent and highly scalable solution. The advantages of virtual computing sustain, applications are still run in virtual environment, scaled on demand and flexible. The creation of new virtual machines is a matter of minutes and no additional resources are needed.
 
 Cloud computing providers usually implements a pay-as-you-go model where all costs are based on actual usage and new applications are purchased when needed. Advantage of this payment model becomes even mere significant when company has a lot of applications that needs to run in the same and transaction peaks are expected at the same period of time. The load balancing mechanisms cloud providers dispose with, and thanks to size of their clusters the availability of the application is guaranteed  and the actual costs are much lower compared to the situation when company has to provide all the hardware on their own. And when the peaks are over all the necessary additional resources can be reused by the cloud provider for other applications. To contrast this situation in virtual computing model these resources would be left unused on the company side. The shares resources idea in huge clusters is one of the strongest advantages of cloud computing.
 
@@ -120,29 +120,29 @@ As we already mentioned the \emph{Google Compute Engine} where the understanding
 
 Let's focus on how the schema of\emph{Regions} and \emph{Zones} works in the \textbf{IBM SoftLayer} cloud provider. Their model is quite similar to the \textbf{Microsoft Azure}. However they do not use the term of \emph{Region}. Instead the \emph{Data Center} term is used~\cite{softlayer_datacenters}. This term truly refer to an exact location (for each center exact city is told). As the product pages describe the locations where data centers are placed are for instance \texttt{Dallas 01}, \texttt{Dallas 09}, \texttt{Amsterdam 02}, \texttt{Washington, D.C. 01} or just \texttt{Paris}.
 
-As you noticed, there might be some redundancy within a location. When this happens (there are multiple data centers in one city) each data center is numbered. So how does this fit in the scheme described above? For the purposes of this thesis and for successful integration into \textbf{ManageIQ} let's consider each data center as a separate \emph{Region}. This is a valid approach because when the user of \textbf{IBM SoftLayer} is provisioning a new appliance he needs to select the desired data center of deployment. That's the same situation when deploying into \textbf{Google Compute Engine} where the customer has to select the \emph{Region}. Another point of view is that when there are multiple data centers within one city (let's say in the same \emph{Region}) the situation recalls a state when the provider offers multiple \emph{Availabilty Zones} for the region:
+As you noticed, there might be some redundancy within a location. When this happens (there are multiple data centers in one city) each data center is numbered. So how does this fit in the scheme described above? For the purposes of this thesis and for successful integration into \textbf{ManageIQ} let's consider each data center as a separate \emph{Region}. This is a valid approach because when the user of \textbf{IBM SoftLayer} is provisioning a new appliance he needs to select the desired data center of deployment. That's the same situation when deploying into \textbf{Google Compute Engine} where the customer has to select the \emph{Region}. Another point of view is that when there are multiple data centers within one city (let's say in the same \emph{Region}) the situation recalls a state when the provider offers multiple \emph{Availability Zones} for the region:
 
 \begin{enumerate}
 	\item Such data centers are in the same \emph{Region}.
 	\item Each one is independent on another.
 \end{enumerate}
 
-This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data centers}. On the other hand as being said each data center is selectable. In other words it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his device. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
+This view can bring us the idea the \textbf{IBM SoftLayer} provider is actually offering an \emph{Availability Zones} mixed with \emph{Regions} and calls them \emph{Data Centers}. On the other hand as being said each data center is selectable. In other words it is possible to pick each of them and deploy the appliance there. But this view goes strictly against the presumed policy that zones are managed internally by the provider and the user is usually not able to select, specify which zone is being used for his device. And there's also another aspect why the comparison of zones and data centers within the same location is not a valid one. There's no internal connection (beside the name) how the data centers can be linked to the others in the same city. The missing relation (via API, network, etc.) is finally the reason why to model every data center as a separate \emph{Region}.
 
 \subsection{Servers}
 \label{sub:Servers}
 
-Once the user figures out where he can run his appliances, it's worth discovering what is being provisioned and run. In the clouds of the \emph{IaaS} type it is usually a some kind of \emph{server}. Previously it's been mentioned~\ref{subs:Outsourcing the virtualization} that the most common type of device is a \emph{virtual server}. But this is not the only article available. For numerous security reasons some cloud providers brings the possibility to run such virtual server in three types of environment. \textbf{IBM SoftLayer} provides all of them.
+Once the user figures out where he can run his appliances, it's worth discovering what is being provisioned and run. In the clouds of the \emph{IaaS} type it is usually a some kind of \emph{Server}. Previously it's been mentioned~\ref{subs:Outsourcing the virtualization} that the most common type of device is a \emph{Virtual Server}. But this is not the only article available. For numerous security reasons some cloud providers brings the possibility to run such virtual server in three types of environment. \textbf{IBM SoftLayer} provides all of them.
 
 \subsubsection{Shared hardware}
 \label{subs:Shared hardware}
 
-To run a \emph{virtual server} on a shared hardware is the cheaper variant. It is also suitable for most of the needs. While the customer does not demand any special treatment like enhanced security features or a specific type of hardware, this is the way to go. The provisioned virtual server is placed on a server within the data center and under a \emph{hypervisor}. This hypervisor manages also other appliances and does not differentiate who is the customer, owner of the virtual machine. Shared hawrdare means shared environment in a sense of a communal hypervisor and shared physical layer between users.
+To run a \emph{Virtual Server} on a shared hardware is the cheaper variant. It is also suitable for most of the needs. While the customer does not demand any special treatment like enhanced security features or a specific type of hardware, this is the way to go. The provisioned virtual server is placed on a server within the data center and under a \emph{Hypervisor}. This hypervisor manages also other appliances and does not differentiate who is the customer, owner of the virtual machine. Shared hardware means shared environment in a sense of a communal hypervisor and shared physical layer between users.
 
 \subsubsection{Dedicated hardware}
 \label{subs:Dedicated hardware}
 
-The opposite option is to reserve a \emph{dedicated hardware}. It's more expensive on the other hand more secure too. By using a dedicated machine for appliances owned by one user only brings another layer how to secure the data. Also some providers can offer an option to let the user be responsible over the \emph{hypervisor} too. In addition with running appliances on dedicated hardware makes the customer in complete control over the leased infrastructure.
+The opposite option is to reserve a \emph{dedicated hardware}. It's more expensive on the other hand more secure too. By using a dedicated machine for appliances owned by one user only brings another layer how to secure the data. Also some providers can offer an option to let the user be responsible over the \emph{Hypervisor} too. In addition with running appliances on dedicated hardware makes the customer in complete control over the leased infrastructure.
 
 \subsubsection{Bare metal servers}
 \label{subs:Bare metal servers}
@@ -178,24 +178,24 @@ Once the customer knows where the virtual machine should be run and what kind of
 \subsection{Networking}
 \label{sub:Networking}
 
-And finally the last of the remarkable areas of IaaS clouds --- networking of the appliances. While a customer is provisioning a virtual machine this machine is a part of a greater infrastructure. Inside this complex system its components need to be connected and linked with others. In order to achieve that clouds and virtualized computing brings mechanisms of \emph{virtual networks}. These networks are modeled to behave and to offer the same functionality as their physical equivalents. It depends on a cloud provided but basically there are couple of types of network infrastructure entities.
+And finally the last of the remarkable areas of IaaS clouds --- networking of the appliances. While a customer is provisioning a virtual machine this machine is a part of a greater infrastructure. Inside this complex system its components need to be connected and linked with others. In order to achieve that clouds and virtualized computing brings mechanisms of \emph{virtual Networks}. These networks are modeled to behave and to offer the same functionality as their physical equivalents. It depends on a cloud provided but basically there are couple of types of network infrastructure entities.
 
-\subsubsection{Network port}
-\label{subs:Network port}
+\subsubsection{Network Port}
+\label{subs:Network Port}
 
-Each virtual server is provided with network interfaces with its very own MAC address and etc. They are usually called \emph{Virtual LANs} or \emph{Metwork ports}. They point to the network interfaces of the virtual machine but they are also propagated outside to the managing API or system above. Thanks to this propagation they can be dynamically modified via API or the tooling provided by the cloud provider.
+Each virtual server is provided with network interfaces with its very own MAC address and etc. They are usually called \emph{Virtual LANs} or \emph{Metwork Ports}. They point to the network interfaces of the virtual machine but they are also propagated outside to the managing API or system above. Thanks to this propagation they can be dynamically modified via API or the tooling provided by the cloud provider.
 
-\subsubsection{Cloud networks and subents}
-\label{subs:Cloud networks and subents}
+\subsubsection{Cloud Networks and Subents}
+\label{subs:Cloud Networks and Subents}
 
-Each port can be connected to a \emph{virtual cloud network} or a \emph{cloud subnet} while these networks works the same as in the world of regular computer networks. They are provided by a IP address ranges (so the device can receive a mapping to a one of them), speed limits, etc. They can also be managed by \emph{firewalls}. However the understanding of cloud networks and subnets is also different across providers.
+Each port can be connected to a virtual \emph{Cloud Metwork} or a \emph{Cloud Subnet} while these networks works the same as in the world of regular computer networks. They are provided by a IP address ranges (so the device can receive a mapping to a one of them), speed limits, etc. They can also be managed by \emph{Firewalls}. However the understanding of cloud networks and subnets is also different across providers.
 
-For example let's describe the meaning of cloud networks and how they work in \textbf{IBM SoftLayer}. Each virtual server is given access to two default networks for the data center. It is a \emph{Private cloud network} and the \emph{Public cloud network}. They take place of a gate to different areas. The \emph{Private cloud network} connects the device to internal appliances within the data center. For instance such device can mean a network storage volumes or databases, etc. On the other hand the \emph{Public cloud network} is a gateway to the outer world, outside the data center and the cloud. To be precise the cloud networks in this sense does not offer any routing capabilities, they work just as a label of the range of interests available (reachable resources) for the device. And inside these networks \emph{cloud subnets} can be set up. Subnets here behave like the real networks or subnets. A customer can specify IP ranges and all other parameters he needs. The amount of subnets it the same network is not strictly limited for this cloud provider.
+For example let's describe the meaning of cloud networks and how they work in \textbf{IBM SoftLayer}. Each virtual server is given access to two default networks for the data center. It is a \emph{Private Cloud Network} and the \emph{Public Cloud Network}. They take place of a gate to different areas. The \emph{Private Cloud Network} connects the device to internal appliances within the data center. For instance such device can mean a network storage volumes or databases, etc. On the other hand the \emph{Public Cloud Network} is a gateway to the outer world, outside the data center and the cloud. To be precise the cloud networks in this sense does not offer any routing capabilities, they work just as a label of the range of interests available (reachable resources) for the device. And inside these networks \emph{Cloud Subnets} can be set up. Subnets here behave like the real networks or subnets. A customer can specify IP ranges and all other parameters he needs. The amount of subnets it the same network is not strictly limited for this cloud provider.
 
-\subsubsection{Cloud router}
-\label{subs:Cloud router}
+\subsubsection{Network Router}
+\label{subs:Network Router}
 
-A part from the attached devices and addresses each network needs its \emph{Network router}. This router is also not a physical device and for each subnetwork (as they are defined in the \textbf{IBM SoftLayer}) exist exactly one. Usually they are given a name and IP address and the only use for them is to build a proper illusion of the real network. Each router can service multiple subnets as it is known from the real world. Within each cloud network there can be multiple routers. However this architecture used in \textbf{IBM SoftLayer} does not provide more complex hierarchy, more levels of subnetworks. On contrary such advanced networking is not much common for cloud infrastructures currently deployed and this plain approach is sufficient enough.
+A part from the attached devices and addresses each network needs its \emph{Network Router}. This router is also not a physical device and for each subnetwork (as they are defined in the \textbf{IBM SoftLayer}) exist exactly one. Usually they are given a name and IP address and the only use for them is to build a proper illusion of the real network. Each router can service multiple subnets as it is known from the real world. Within each cloud network there can be multiple routers. However this architecture used in \textbf{IBM SoftLayer} does not provide more complex hierarchy, more levels of subnetworks. On contrary such advanced networking is not much common for cloud infrastructures currently deployed and this plain approach is sufficient enough.
 
 \section{API access}
 \label{sec:API access}
@@ -298,26 +298,26 @@ new_instance.id
 
 A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} provides abstract internal bindings that should suit most of the needs.
 
-\section{Internal principles}
-\label{sec:Internal principles}
+\section{Internal Principles}
+\label{sec:Internal Principles}
 
 
 \noindent\texttt{\color{OliveGreen}TODO: ?}
 
-\chapter{Implemented interfaces}
-\label{chap:Implemented interfaces}
+\chapter{Implemented Interfaces}
+\label{chap:Implemented Interfaces}
 
 \noindent\texttt{\color{OliveGreen}TODO: How to interface in ManageIQ}
 
-\section{Common interface}
-\label{sec:Common interface}
+\section{Common Interface}
+\label{sec:Common Interface}
 
 \noindent\texttt{\color{OliveGreen}TODO: Files placed at, base managers, controllers}
 
-\subsection{Connection management}
-\label{sub:Connection management}
+\subsection{Connection Management}
+\label{sub:Connection Management}
 
-\noindent\texttt{\color{OliveGreen}TODO: ManageMixin}
+\noindent\texttt{\color{OliveGreen}TODO: ManagerMixin}
 
 \subsection{Discovery}
 \label{sub:Discovery}
@@ -334,12 +334,12 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 \section{Cloud Manager}
 \label{sec:Cloud Manager}
 
-\emph{Cloud Manager} is a class specified for each provider and inherits from base \texttt{CloudManager}. In this case specified as \texttt{ManageIQ::Providers::Softlayer::CloudManager}. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
+\emph{Cloud Manager} is a class specified for each provider and inherits from base \texttt{CloudManager}. In this case specified as \texttt{ManageIQ::Providers::Softlayer::CloudManager}. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual Servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud Network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
 
-Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual machine}'s power operations. It also specifies how the \emph{NetworkManager} is related and delegates networking tasks into this manager.
+Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual Machine}'s power operations. It also specifies how the \emph{Network Manager} is related and delegates networking tasks into this manager.
 
-\subsection{Cloud refresh}
-\label{sub:Cloud refresh}
+\subsection{Cloud Refresh}
+\label{sub:Cloud Refresh}
 
 To run a discovery service or refresh of the provider the \emph{Cloud Refresh} namespace has to be defined. This is the most important class for each manager. It covers the import and mapping of every supported entity which is watched by the manager. The \emph{Refresh} procedure itself is defined and proceed in three separate phases:
 
@@ -354,15 +354,15 @@ To run a discovery service or refresh of the provider the \emph{Cloud Refresh} n
 
 The \texttt{:Refresher} specifies the work flow of the refresh. It tells the \textbf{ManageIQ} what refresh should be run, how to store all discovered appliances and which database schemes and tables should be affected. The major issue which this class takes care of is to identify to which provider the devices belongs to. This refresher when initiated also queues a refresh next refresh of the providers \emph{Network Manager}.
 
-\subsubsection{Refresh worker}
-\label{subs:Refresh worker}
+\subsubsection{Refresh Worker}
+\label{subs:Refresh Worker}
 
 The worker is a specification of the way how import is proceed. Normally none modifications to the standard process is required. So it is for this provider. Each provider needs a \texttt{:RefreshWorker} in order to register the run of refresh. The naming conventions and scheme of \textbf{ManageIQ} requires also the \texttt{:Runner} sub-class to be defined. Both of them inherits all the functionality from the base cloud manager's refresh worker.
 
 \subsubsection{Refresh Parser}
 \label{subs:Refresh Parser}
 
-This class is the most important part of the refresh process. It defines which devices are added and where these should be registered in \textbf{ManageIQ}. Here it is specified how the mapping of each of the following entities is done between provider client library (in the case of \textbf{IBM SoftLayer} it is \texttt{fog-softlayer}) and the internal structure. Also the mapping where to store these information is done (whether the devide is \emph{Virtual server} or \emph{Flavor} etc.).
+This class is the most important part of the refresh process. It defines which devices are added and where these should be registered in \textbf{ManageIQ}. Here it is specified how the mapping of each of the following entities is done between provider client library (in the case of \textbf{IBM SoftLayer} it is \texttt{fog-softlayer}) and the internal structure. Also the mapping where to store these information is done (whether the devide is \emph{Virtual Server} or \emph{Flavor} etc.).
 
 \subsection{Availability Zones}
 \label{sub:Availability Zones}
@@ -398,14 +398,14 @@ a_zones = [default_zone]
 	\end{tabular}
 \end{table}
 
-\subsection{Authentication key pairs}
-\label{sub:Authentication key pairs}
+\subsection{Authentication Key Pairs}
+\label{sub:Authentication Key Pairs}
 
-Since \textbf{ManageIQ} aims to completely manage over different providers besides monitoring purposes it is essential to provide user with possibility to connect to the machine. While there are any \emph{Authentication key pairs} attached to the device this is the class which takes care of them. Each key pair when created contains a name and and fingerprint. This provider specifies the key par with label as a name and a certificate as a fingerprint. Fetching \emph{Authentication key pairs} from provider is easy via \emph{Fog} by a simple run of \texttt{compute.key\_pairs.all} command.
+Since \textbf{ManageIQ} aims to completely manage over different providers besides monitoring purposes it is essential to provide user with possibility to connect to the machine. While there are any \emph{Authentication Key Pairs} attached to the device this is the class which takes care of them. Each key pair when created contains a name and and fingerprint. This provider specifies the key par with label as a name and a certificate as a fingerprint. Fetching \emph{Authentication Key Pairs} from provider is easy via \emph{Fog} by a simple run of \texttt{compute.key\_pairs.all} command.
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Authentication key pair} attributes mapping}\label{tab:Authentication key pair attributes mapping}
+	\caption{\emph{Authentication Key Pair} attributes mapping}\label{tab:Authentication Key Pair attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute             & Corresponding value                                                           \\
@@ -455,8 +455,8 @@ compute.flavors.first
 	\end{tabular}
 \end{table}
 
-\subsection{Virtual machines}
-\label{sub:Virtual machines}
+\subsection{Virtual Machines}
+\label{sub:Virtual Machines}
 
 This is the most important commodity that has being imported and discovered. Each \emph{Virtual Machine} caries information about its name, domain, hardware configuration and even \emph{Flavor}, \emph{Image} which it is based upon or \emph{Authentication key pairs} attached. The attribute mapping is described in Table~\ref{tab:Virtual Machine attributes mapping}. Every attribute listed is successfully mapped except the \emph{Disks} discovery. The \emph{Softlayer API} described in the Subsection~\ref{sub:Standard REST API} provides every piece of information needed except the effective disk size. Currently it's been decided to wait until the support for this value is in place. For now no disks are mapped for any \emph{Virtual Machine} in this provider but the functionality is prepared so once these data are available, it can be easily updated.
 
@@ -501,8 +501,8 @@ Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pau
 	\end{tabular}
 \end{table}
 
-\subsection{Image templates}
-\label{sub:Image templates}
+\subsection{Image Templates}
+\label{sub:Image Templates}
 
 In each Region there are specific \emph{Images} available. There are \emph{Public Images} created by other users or made publicly available by the cloud provider. Also there are \emph{Private Images} created just for the needs of the customer. While importing them, we need to distinguish which images does belong to what category. Also there are other aspects that would be great to categorize. Unfortunately, this is not available via staging APIs. For example we would like to be able to categorize image by operating system or designated and required disk space. It would be also helpful to differentiate which images are available for purchase and which are already old and their base operating system image is already missing. Currently none of these functionality is available via API and just the basic data is available. Because of the defect mentioned above he additional features were not been implemented. The mapping used for images can be seen below.
 
@@ -528,7 +528,7 @@ In each Region there are specific \emph{Images} available. There are \emph{Publi
 \subsection{Tags}
 \label{sub:Tags}
 
-On of the most important aspects of \textbf{ManageIQ} is the capability to \emph{Tag} user's devices across providers and types. \textbf{IBM SoftLayer} also offers tagging capabilities. Each virtual machine can be tagged and labeled. And not only one label can be applied on the device. The same works for the \textbf{ManageIQ} too. In contrary this provider offers such functionality just for provisioned appliances, but not for other types of devices like \emph{Cloud networks}, \emph{Network routers} or \emph{Images}. This makes the import of tags form provider less efficient. There's also another problem that blocks the correct usage of tags in the cloud manager.
+On of the most important aspects of \textbf{ManageIQ} is the capability to \emph{Tag} user's devices across providers and types. \textbf{IBM SoftLayer} also offers tagging capabilities. Each virtual machine can be tagged and labeled. And not only one label can be applied on the device. The same works for the \textbf{ManageIQ} too. In contrary this provider offers such functionality just for provisioned appliances, but not for other types of devices like \emph{Cloud Networks}, \emph{Network Routers} or \emph{Images}. This makes the import of tags form provider less efficient. There's also another problem that blocks the correct usage of tags in the cloud manager.
 
 The issue is that \textbf{ManageIQ} currently does not offer a way how to propagate tag changes into the provider. So in situation when user modifies tags of a server int he cloud manager and then wants to refresh the provider, old \emph{Tags} are imported again and his changes are overwritten. Due to this fact the tags are currently being ignored and skipped during refresh and discovery.
 
@@ -576,10 +576,10 @@ In order to connect and visualize relations of discovered devices ManageIQ bring
 
 The main change while this manager is connecting to the provider's API is it's using the \texttt{Fog::Network} service instead of the \texttt{Fog::Compute}. The connection to this service is made analogically as for the compute service so the following text is referring to the \texttt{network} variable described at Code~\ref{code:fog_compute}.
 
-\subsection{Network refresh}
-\label{sub:Network refresh}
+\subsection{Network Refresh}
+\label{sub:Network Refresh}
 
-In the core the purpose of \emph{Network refresh} is the same as for the \emph{Cloud refresh}. And the work flow is also the same: this refresh requires the same steps to be implemented (\texttt{:Refresher}, \texttt{:RefreshWorker}, \texttt{:Runner} and \texttt{:RefreshParser}). They provides the same role which has already been explained.
+In the core the purpose of \emph{Network Refresh} is the same as for the \emph{Cloud Refresh}. And the work flow is also the same: this refresh requires the same steps to be implemented (\texttt{:Refresher}, \texttt{:RefreshWorker}, \texttt{:Runner} and \texttt{:RefreshParser}). They provides the same role which has already been explained.
 
 The \texttt{:RefreshParser} is capable of exploration over:
 
@@ -591,8 +591,8 @@ The \texttt{:RefreshParser} is capable of exploration over:
 
 Each component's discovery is initiated via call to a corresponding function. In network discovery these functions are registered: \texttt{get\_cloud\_network}, \texttt{get\_network\_ports}, \\ \texttt{get\_cloud\_subnets\,(cloud\_network)} and \texttt{get\_network\_routers}.
 
-\subsection{Cloud networks}
-\label{sub:Cloud networks}
+\subsection{Cloud Networks}
+\label{sub:Cloud Networks}
 
 It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Networks}. They are used as a labels without networking attributes yet defining the connection and subnetwork purpose. There exist two types of such networks and according to that a specific sub-class has been created for each of them:
 
@@ -624,12 +624,12 @@ It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Network
 	\end{tabular}
 \end{table}
 
-\subsection{Cloud subnetworks}
-\label{sub:Cloud subnetworks}
+\subsection{Cloud Subnetworks}
+\label{sub:Cloud Subnetworks}
 
-In case of \emph{Cloud Subnets} the situation is a bit more difficult. These networks are not directly displayed via \emph{Fog} like the other network components. However both entities using and interfacing these subnetworks contains desired data. These two entities are \emph{Cloud Networks} and \emph{Network ports}. Each of them provides enough data to register a subnet. It is considered as a better practice while describing components to start from greater picture to smaller parts. The \emph{Cloud Network} can be considered as a bigger and more important component because it can contain more \emph{Network ports} and represents a parent for each \emph{Cloud subnet}.
+In case of \emph{Cloud Subnets} the situation is a bit more difficult. These networks are not directly displayed via \emph{Fog} like the other network components. However both entities using and interfacing these subnetworks contains desired data. These two entities are \emph{Cloud Networks} and \emph{Network Ports}. Each of them provides enough data to register a subnet. It is considered as a better practice while describing components to start from greater picture to smaller parts. The \emph{Cloud Network} can be considered as a bigger and more important component because it can contain more \emph{Network Ports} and represents a parent for each \emph{Cloud Subnet}.
 
-While running discovery over a \emph{Cloud network} all related subnetworks are discovered too. This behavior is ensured by calling \texttt{get\_cloud\_subnets\,(cloud\_network)} during parsing action for each network. When all subnets are found they are parsed, registered and stored int \textbf{ManageIQ}'s local storage. Later, when the refresh process reaches the \emph{Network ports} discovery, their identificators are found and they can be found in the database and linked to the port.
+While running discovery over a \emph{Cloud Network} all related subnetworks are discovered too. This behavior is ensured by calling \texttt{get\_cloud\_subnets\,(cloud\_network)} during parsing action for each network. When all subnets are found they are parsed, registered and stored int \textbf{ManageIQ}'s local storage. Later, when the refresh process reaches the \emph{Network Ports} discovery, their identificators are found and they can be found in the database and linked to the port.
 
 \begin{table}[ht]
 	\centering
@@ -652,12 +652,12 @@ While running discovery over a \emph{Cloud network} all related subnetworks are 
 	\end{tabular}
 \end{table}
 
-\subsection{Network ports}
-\label{sub:Network ports}
+\subsection{Network Ports}
+\label{sub:Network Ports}
 
-Running the \emph{Network ports} refresh process is the next step in order to complete whole network discovery. \emph{Network ports} are used as a virtual replacement of physical network interfaces. Their data are available via querying each \emph{Virtual machine}. To achieve and access it the refresh process of corresponding \emph{Cloud Manager} has to be run before the \emph{Network Manager}.
+Running the \emph{Network Ports} refresh process is the next step in order to complete whole network discovery. \emph{Network Ports} are used as a virtual replacement of physical network interfaces. Their data are available via querying each \emph{Virtual Machine}. To achieve and access it the refresh process of corresponding \emph{Cloud Manager} has to be run before the \emph{Network Manager}.
 
-Since the \emph{Network subnets} were already discovered using the networks, not it remains only to map them to maintain and register the connection inside \textbf{ManageIQ}. This is done by a special mapping functionality. While specifying a mapping key \\ \texttt{:cloud\_subnet\_network\_ports} in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network subnets}. This is due to \texttt{ManageIQ} internal mapping and database scheme where the information for each \emph{Network port} to \emph{Cloud subnet} relation is stored inside the \emph{Cloud subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network port} on more subnets.
+Since the \emph{Network Subnets} were already discovered using the networks, now it only remains to map them to maintain and register the connection inside \textbf{ManageIQ}. This is done by a special mapping functionality. While specifying a mapping key \\ \texttt{:cloud\_subnet\_network\_ports} in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network Subnets}. This is due to \texttt{ManageIQ} internal mapping and database scheme where the information for each \emph{Network Port} to \emph{Cloud Subnet} relation is stored inside the \emph{Cloud Subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network Port} on more subnets.
 
 \begin{lstlisting}[language=Ruby,caption={\emph{Network port} to \emph{Cloud subnet} mapping},label=code:port_to_subnet]
 # Using a convertor for a relation in opposite direction
@@ -669,7 +669,7 @@ network_port[:cloud_subnet_network_ports] = [{
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Network port} attributes mapping}\label{tab:Network port attributes mapping}
+	\caption{\emph{Network Port} attributes mapping}\label{tab:Network Port attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute              & Corresponding value                                                            \\
@@ -690,14 +690,14 @@ network_port[:cloud_subnet_network_ports] = [{
 	\end{tabular}
 \end{table}
 
-\subsection{Network routers}
-\label{sub:Network routers}
+\subsection{Network Routers}
+\label{sub:Network Routers}
 
-The only remaining network component to import is a \emph{Network router}. Routers are used to manage \emph{Cloud subnets} while each router can handle more than one subnet. They are created only on purpose when user requests a new subnet but does not list it under any present	router. There's not much information provided for the router, but they are a the necessary link between other elements in the network.
+The only remaining network component to import is a \emph{Network Router}. Routers are used to manage \emph{Cloud Subnets} while each router can handle more than one subnet. They are created only on purpose when user requests a new subnet but does not list it under any present	router. There's not much information provided for the router, but they are a the necessary link between other elements in the network.
 
 \begin{table}[ht]
 	\centering
-	\caption{\emph{Network router} attributes mapping}\label{tab:Network router attributes mapping}
+	\caption{\emph{Network Router} attributes mapping}\label{tab:Network Router attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
 		Attribute          & Corresponding value                                                              \\
