@@ -209,43 +209,78 @@ For example let's describe the meaning of cloud networks and how they work in \t
 \subsubsection{Network Router}
 \label{subs:Network Router}
 
-A part from the attached devices and addresses each network needs its \emph{Network Router}. This router is also not a physical device and for each subnetwork (as they are defined in the \textbf{IBM SoftLayer}) exist exactly one. Usually they are given a name and IP address and the only use for them is to build a proper illusion of the real network. Each router can service multiple subnets as it is known from the real world. Within each cloud network there can be multiple routers. However this architecture used in \textbf{IBM SoftLayer} does not provide more complex hierarchy, more levels of subnetworks. On contrary such advanced networking is not much common for cloud infrastructures currently deployed and this plain approach is sufficient enough.
+A part from the attached devices and addresses each network needs its \emph{Network Router}. This router is not a physical device too. For each subnetwork (as they are defined in the \textbf{IBM SoftLayer}) exists exactly one such router. Usually they are given a name and IP address and the only use for them is to build a proper illusion of the real network. Each router can service multiple subnets as it is known from the regular computer networking. Within each cloud network there can be multiple routers. However the architecture used in \textbf{IBM SoftLayer} does not provide more complex hierarchy, more levels of subnetworks. On contrary any advanced networking is not much common for cloud infrastructures currently deployed and this flat approach is sufficient enough.
 
 \section{API access}
 \label{sec:API access}
 
 For managing purposes each cloud provider has it's own web interface. Such tool usually contains all needed functionality: visualization of leased devices and machines, networking adjustments, provisioning of new appliances, creating snapshots, viewing spendings and other billing information.
 
-On the other hand once more advanced user wants to automate his work flows or create scripts to handle some of his common tasks an API is needed. There are numerous different libraries allowing a user to connect to the provider. In this case it is essential to focus on the \textbf{IBM SoftLayer} provider with respect to the needs and capabilities of \textbf{ManageIQ}.
+On the other hand an API is needed once more advanced user wants to automate his work flows or create scripts to handle some of his common tasks. There are numerous different libraries allowing a user to connect to the provider. In this case it is essential to focus on the \textbf{IBM SoftLayer} provider with respect to the needs and capabilities of \textbf{ManageIQ}.
 
 \subsection{Standard REST API}
 \label{sub:Standard REST API}
 
-The standard way offered by the provider is to use the \textbf{IBM SoftLayer}'s \emph{REST API}~\cite{restapi}. This extensive API offers a complete access to all features of the cloud infrastructure. It is a low level standard defining how to communicate with the cloud, how to format requests and what responses should be expected etc. The major advantages of the API is in its complexity and independence on programming language.
+The standard way offered by provider is to use the \textbf{IBM SoftLayer}'s \emph{REST API}~\cite{restapi}. This extensive API offers a complete access to nearly all features of the cloud infrastructure. It is a low level standard defining how to communicate with the cloud, how to format requests and what responses should be expected etc. The major advantages of the API is in its complexity and independence on programming language.
 
 \subsubsection{User authentication}
 \label{subs:User authentication}
 
-When user is managing the cloud services via web tool, the normal and most common way to identify himself is to use \emph{username} and \emph{password}. While using APIs the situation is a bit different. And each cloud define the way on their own. \textbf{Google Compute Engine} requires to specify the \emph{Project} name, user email and then use a special \emph{Google JSON key} which is basically a project specific certificate for the user. The \textbf{Amazon web services EC2} cloud use a generated pair of \emph{Access key ID} and a \emph{Secret Access key}. And when it comes to the \textbf{IBM SoftLayer} the factors used for authentication involves the normal \emph{User ID} and a specially generated \emph{Secret API key}.
+When user is managing the cloud services via web tool, the normal and most common way to identify himself is to use \emph{username} and \emph{password}. While using APIs the situation is a bit different. And each cloud define the way on their own. \textbf{Google Compute Engine} for instance requires to specify the project name, user email and then uses a special \emph{Google JSON key} which is basically a project specific certificate for the user. The \textbf{Amazon Web Services EC2} cloud uses a generated pair of \emph{Access key ID} and a \emph{Secret Access key}. And when it comes to the \textbf{IBM SoftLayer} there are two factors used for authentication. It involves the normal \emph{User ID} (a customer specific ID) and a specially generated \emph{Secret API key} for each of the customer's administrator.
 
 \subsubsection{Language bindings}
 \label{subs:Language bindings}
 
-This API pretty simple and low level in the aspect of connection handling and abstract operations. For better integration of this API into user projects the derived libraries has been built upon it to offer bindings and object based interface for different programing languages. Since \textbf{ManageIQ} is written in \emph{Ruby} we should focus on and elaborate the libraries created for this programming language.
+The API pretty basic and low level in the aspect of connection handling and abstract operations. For better integration of this API into user projects the derived libraries has been built upon it to offer bindings and object based interface for different programing languages. Since \textbf{ManageIQ} is written in \emph{Ruby} we should focus on and elaborate the libraries created for this programming language.
 
 \subsection{Softlayer API for Ruby}
 \label{sub:Softlayer-API}
 
-First of them is a \emph{SoftLayer API} brought by the SoftLayer developers~\cite{softlayer_api}. This library provides a Ruby Gem packages named \texttt{softlayer\_api}. It offers a complex documentation and is designed for easy to use work flows. The code however is not much structured and organized.
+First of them is a \emph{SoftLayer API} brought by the SoftLayer developers~\cite{softlayer_api}. This library provides a Ruby Gem packages named \texttt{softlayer\_api}. However because of the lack of proper structure and disorganized code it is not easy to follow for beginners. All provided activities are available via one service and the naming conventions respects the \textbf{IBM Softlayer} standards. This makes it a bit complicated in the manner of maintenance while the provider is integrated with others. By using this library each developer willing to maintain the code has to understand internal \textbf{IBM Softlayer} work flows. The example Code~\ref{code:softlayer_api} describes the basic usage of this library.
 
-\todo{more detail}
+\begin{lstlisting}[language=Ruby,caption={Example code for the \texttt{softlayer\_api}},label=code:softlayer_api,float=htpb]
+require "softlayer_api"
+
+# Specify the provider and credentials
+SoftLayer::Client.default_client = SoftLayer::Client.new(
+  :username => "<username>",
+  :api_key  => "<api_key>"
+)
+# Connect to the Compute and Network service
+account = SoftLayer::Account.account_for_client()
+
+# lookup all provisioned servers
+account.servers
+
+=> [<SoftLayer::VirtualServer:0x00000002090ec8
+		  @softlayer_client=
+			  <SoftLayer::Client:0x00000002124ce0
+				# client details like used credentials, API, etc.
+				>
+		  @softlayer_hash=
+		   	{ "domain"=>"example.com",
+		      "fullyQualifiedDomainName"=>"centos.example.com",
+		    	"hostname"=>"centos",
+		    	"id"=>17784479,
+		    	"maxCpu"=>1,
+		    	"maxMemory"=>1024,
+					# etc.
+			  }
+	 ]
+
+# get the first server and check its state
+server = SoftLayer::VirtualServer.server_with_id(17784479)
+server[:powerState]
+
+=> 'Running'
+\end{lstlisting}
 
 \subsection{Fog the Ruby cloud service library}
 \label{sub:Fog cloud library}
 
 There's also a \texttt{fog-softlayer} gem, a \emph{Fog} library for this provider. \emph{Fog} is a cloud service library for Ruby available for many different providers across market. This makes the Gem easily understandable and compatible with other providers. It is also much simpler to maintain the structure and follow a pattern of other providers already available in the \textbf{ManageIQ} which are also implemented via \emph{Fog}. This library also offers extensive documentation (for \emph{Fog} in general) and example code for the \texttt{fog-softlayer} covering the desired functionality.
 
-To compare the \texttt{fog-softlayer} with \texttt{softlayer\_api} the services and objects are more structured here. They are kept and managed via 5 basic services. These services can operate separately.
+To contrast the \texttt{fog-softlayer} with \texttt{softlayer\_api} the services and objects are more structured here. They also offers a standardized cloud naming conventions which makes it easier to follow and maintain. Its structure corresponds with every other provider's \emph{Fog}. It is kept and managed via 5 basic services which can operate separately.
 
 \begin{itemize}
 	\item \texttt{Fog::Account} accessing customer account's organization if they are grouped with others
