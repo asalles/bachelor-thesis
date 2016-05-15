@@ -61,7 +61,7 @@ Rapid elasticity presumes the resources are provisioned and released automatical
 
 Measured service is a term used for automatic control over cloud clusters resources in order to monitor, analyze, control and optimize the usage. This mechanism provides additional transparency over the service for both the customer and also the provider.
 
-Cloud solutions have many shapes and forms in general. To distinguish and differentiate between common types of the \emph{Cloud} multiple points of view should be mentioned. One scale to be considered is the availability to purchase a different deployment models. There exist private and public clouds. \emph{Public Cloud} means the cloud infrastructure (not the appliances) is widely accessible by anyone. No matter if organization or a person, anyone is able to use the service provided. As an example of this type of cloud service the Amazon's \emph{AWS EC2}, Red Hat's \emph{OpenShift} and \emph{OpenStack}, Microsoft's \emph{Azure} or \emph{Google Cloud Platform} can be mentioned. By using a \emph{Public Cloud} customers share the same infrastructure for their virtual machines. In contrary there is a second option available. These so called \emph{Private Cloud} are strictly used by one customer only and they are based on a special contract between the cloud service provider and the customer. This provides additional options for control over the purchased infrastructure and more security advantages as well. Since there is no other user in this cloud it avoids the risk of any exploited vulnerability in the isolation of each application.
+Cloud solutions have many shapes and forms in general~\cite{hassan}. To distinguish and differentiate between common types of the \emph{Cloud} multiple points of view should be mentioned. One scale to be considered is the availability to purchase a different deployment models. There exist private and public clouds. \emph{Public Cloud} means the cloud infrastructure (not the appliances) is widely accessible by anyone. No matter if organization or a person, anyone is able to use the service provided. As an example of this type of cloud service the Amazon's \emph{AWS EC2}, Red Hat's \emph{OpenShift} and \emph{OpenStack}, Microsoft's \emph{Azure} or \emph{Google Cloud Platform} can be mentioned. By using a \emph{Public Cloud} customers share the same infrastructure for their virtual machines. In contrary there is a second option available. These so called \emph{Private Cloud} are strictly used by one customer only and they are based on a special contract between the cloud service provider and the customer. This provides additional options for control over the purchased infrastructure and more security advantages as well. Since there is no other user in this cloud it avoids the risk of any exploited vulnerability in the isolation of each application.
 
 The other option how to differentiate between available cloud solutions is by its level of abstraction: the service models. According to the service-oriented architecture cloud computing providers offer three main types of service. These are (in the stacking order) \emph{Infrastructure as a service}, \emph{Platform as a service} and finally \emph{Software as a service}.
 
@@ -278,7 +278,7 @@ server[:powerState]
 \subsection{Fog the Ruby cloud service library}
 \label{sub:Fog cloud library}
 
-There's also a \texttt{fog-softlayer} gem, a \emph{Fog} library for this provider. \emph{Fog} is a cloud service library for Ruby available for many different providers across market. This makes the Gem easily understandable and compatible with other providers. It is also much simpler to maintain the structure and follow a pattern of other providers already available in the \textbf{ManageIQ} which are also implemented via \emph{Fog}. This library also offers extensive documentation (for \emph{Fog} in general) and example code for the \texttt{fog-softlayer} covering the desired functionality.
+There's also a \texttt{fog-softlayer} gem, a \emph{Fog} library for this provider~\cite{fog-softlayer}. \emph{Fog} is a cloud service library for Ruby available for many different providers across market. This makes the Gem easily understandable and compatible with other providers. It is also much simpler to maintain the structure and follow a pattern of other providers already available in the \textbf{ManageIQ} which are also implemented via \emph{Fog}. This library also offers extensive documentation (for \emph{Fog} in general) and example code for the \texttt{fog-softlayer} covering the desired functionality.
 
 To contrast the \texttt{fog-softlayer} with \texttt{softlayer\_api} the services and objects are more structured here. They also offers a standardized cloud naming conventions which makes it easier to follow and maintain. Its structure corresponds with every other provider's \emph{Fog}. It is kept and managed via 5 basic services which can operate separately.
 
@@ -782,17 +782,67 @@ The only remaining network component to import is a \emph{Network Router}. Route
 \section{Register a provider}
 \label{sec:Register a provider}
 
-\todo{where the provider has to be mentioned}
+Properly registering the implemented provider is required. Otherwise the \textbf{ManageIQ}'s sub-systems wouldn't recognize any of the added functionality. There are two important steps how to properly entitle and enable the provider.
 
+\begin{enumerate}
+	\item Register the managers for displaying, monitoring and refreshing purposes
+	\item Enable to provision via this provider
+\end{enumerate}
+
+The first step is done by enlisting the provider in the main controllers for the \textbf{ManageIQ} workers. The files where to mention the brand new \emph{Cloud Manager} and \emph{Network Manager} are:
+
+\begin{itemize}
+	\item Register a new vendor type: \\
+	\small{\verb|app/models/vm_or_template.rb|}
+	\item Define the setup and teardown order for the provider: \\
+	\small{\verb|app/models/miq_server/worker_management/monitor/class_names.rb|}
+\end{itemize}
+
+Then it is required to enable the provision automation engine. Without this, the provided would be still functional for monitoring purposes but the user would not have any option to provision a \emph{Virtual Server} there. Desired behavior can be achieved by adding and registering the vendor here:
+
+\begin{itemize}
+	\item Register the vendor as eligable for provisioning for front-end: \\
+	\small{\verb|app/models/manageiq/providers/cloud_manager/template.rb|}
+	\item Do the same for the back-end: \\
+	\small{\verb|app/models/miq_provision.rb|}
+	\item Bind the managed properties with provisioning automation engine in folder: \\
+	\small{\verb|lib/miq_automation_engine/service_models/|}
+\end{itemize}
 \section{Front-end}
 \label{sec:Front-end}
 
-\todo{front-end templates}
+Now, once the provided is properly listed in the back-end of the \textbf{ManageIQ} system, it necessary to create and enable user to access the new functionality. Various templates has to be adjusted, some others newly created. These are the main ones modified and created for the \textbf{IBM SoftLayer}:
+
+\begin{itemize}
+	\item Enable the form for adding a provider in:\\
+	\small{\verb|app/views/shared/views/ems_common/angular/_form.html.haml| \\
+		\verb|app/controllers/ems_common.rb| \\
+		\verb|app/assets/javascripts/controllers/ems_common/ems_common_form_controller.js|}
+	\item Register the discovery template in: \\
+	\small{\verb|app/views/ems_cloud/discover.html.haml|}
+	\item Define what credential fields to show in: \\
+	\small{\verb|app/views/layouts/angular/_multi_auth_credentials.html.haml|}
+	\item Add provision template into folder: \\
+	\small{\verb|product/dialogs/miq_dialogs/|}
+	\item Adjust the data evaluation to pass proper data to the back-end in: \\
+	\small{\verb|app/controllers/application_controller/ci_processing.rb|}
+	\item Add and register the provider icon: \\
+	\small{\verb|app/services/network_topology_service.rb| \\
+		\verb|app/assets/images/svg/vendor-softlayer.svg|}
+\end{itemize}
 
 \section{Not implemented functionality}
 \label{sec:Not implemented functionality}
 
-\todo{VM disks, tags, events, monitoring}
+Unfortunately there are some areas that left not implemented into \textbf{ManageIQ}. The lack of this functionality is caused by lack of proper API bindings. There are none yet available. The features that API for \textbf{IBM SoftLayer} currently does not contain is:
+
+\begin{itemize}
+	\item Does not list disk capacities for provisioned \emph{Virtual Machines}
+	\item Missing \emph{Event} driven monitoring
+	\item Lack of any advanced analysis available via API
+\end{itemize}
+
+Once these features are available, they would be implemented.
 
 \chapter{Conclusion}
 \label{chap:Conclusion}
