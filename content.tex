@@ -380,8 +380,7 @@ It is also required to list all available regions before user connects to the pr
 \subsection{Discovery}
 \label{sub:Discovery}
 
-
-\todo{from queue}
+The work flow described above can be slightly inconvenient when user already has his devices in many \emph{Regions}. For such situations there is a \emph{Dicovery} process. There the user just specifies his credentials and the process does the work for him. The application places his dicovery into a \textbf{MiqQueue} and while the discovery is proceed it iterates over every \emph{Region}. While there are \emph{Virtual machines} present in the region, it registered as a new provider and its \emph{Refresh} is scheduled. This work flow is specified in the \verb|ManagerMixin| class.
 
 \clearpage
 \section{Cloud Manager}
