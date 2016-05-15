@@ -368,16 +368,20 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 
 \todo{ManagerMixin}
 
+\subsection{Regions}
+\label{sub:Regions}
+
+What \emph{Regions} are has already been described. However for the integration purposes it's needed to understand how they are treated in the \textbf{ManageIQ}.
+
+When user is adding a new provider he has to specify the \emph{Region}. Basically he is adding a \emph{Region} specific provider. This is a policy how to keep the UI and the overall environment clean for the user. Imagine a situation where such user has his devices deployed in many providers. In the case when for each provider all \emph{Regions} are added his interface can be flooded by them. The other approach is to add one \emph{Region} per provider. And once user needs to attach also another one, he adds a new provider.
+
+It is also required to list all available regions before user connects to the provider. The application uses one step form for adding a provider so he has to be able to specify the \emph{Region} before his credentials are proceed. And since every API client requires to authenticate before any actions can be done, it is required to list all regions statically in a file \verb|<provider_root>regions.rb|.
+
 \subsection{Discovery}
 \label{sub:Discovery}
 
 
 \todo{from queue}
-
-\subsection{Regions}
-\label{sub:Regions}
-
-\todo{Separate provider for each region}
 
 \clearpage
 \section{Cloud Manager}
