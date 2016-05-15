@@ -283,14 +283,14 @@ There's also a \texttt{fog-softlayer} gem, a \emph{Fog} library for this provide
 To contrast the \texttt{fog-softlayer} with \texttt{softlayer\_api} the services and objects are more structured here. They also offers a standardized cloud naming conventions which makes it easier to follow and maintain. Its structure corresponds with every other provider's \emph{Fog}. It is kept and managed via 5 basic services which can operate separately.
 
 \begin{itemize}
-	\item \texttt{Fog::Account} accessing customer account's organization if they are grouped with others
-	\item \texttt{Fog::Compute} is the most important service allowing user to control servers (monitoring, provisioning, deployment, creating snapshots and more)
-	\item \texttt{Fog::Network} offers bindings to manage cloud networks, subnets, routers, etc.
-	\item \texttt{Fog::DNS} for managing DNS records
-	\item \texttt{Fog::Storage} provides connection to \emph{Bluemix} storage service
+	\item \verb|Fog::Account| accessing customer account's organization if they are grouped with others
+	\item \verb|Fog::Compute| is the most important service allowing user to control servers (monitoring, provisioning, deployment, creating snapshots and more)
+	\item \verb|Fog::Network| offers bindings to manage cloud networks, subnets, routers, etc.
+	\item \verb|Fog::DNS| for managing DNS records
+	\item \verb|Fog::Storage| provides connection to \emph{Bluemix} storage service
 \end{itemize}
 
-Each of the services has its own purpose but the most important in a sense of cloud management is the \texttt{Fog::Compute} and \texttt{Fog::Network}. By using just these two user can easily manage his running appliances and deploy new ones. The code sample~\ref{code:fog_compute} shows the basic work flow for listing running servers and how to provision a new one.
+Each of the services has its own purpose but the most important in a sense of cloud management is the \verb|Fog::Compute| and \verb|Fog::Network|. By using just these two user can easily manage his running appliances and deploy new ones. The code sample~\ref{code:fog_compute} shows the basic work flow for listing running servers and how to provision a new one.
 
 \begin{lstlisting}[language=Ruby,caption={Example work flow for Fog SoftLayer},label=code:fog_compute,float=htpb]
 require "fog/softlayer"
@@ -387,7 +387,7 @@ It is also required to list all available regions before user connects to the pr
 \section{Cloud Manager}
 \label{sec:Cloud Manager}
 
-\emph{Cloud Manager} is a class specified for each provider and inherits from base \texttt{CloudManager}. In this case specified as \texttt{ManageIQ::Providers::Softlayer::CloudManager}. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual Servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud Network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
+\emph{Cloud Manager} is a class specified for each provider and inherits from base \verb|CloudManager|. In this case specified as \verb|ManageIQ::Providers::Softlayer::CloudManager|. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual Servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud Network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
 
 Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual Machine}'s power operations. It also specifies how the \emph{Network Manager} is related and delegates networking tasks into this manager.
 
@@ -397,20 +397,20 @@ Besides all the entities and submodules described below this manager specifies a
 To run a discovery service or refresh of the provider the \emph{Cloud Refresh} namespace has to be defined. This is the most important class for each manager. It covers the import and mapping of every supported entity which is watched by the manager. The \emph{Refresh} procedure itself is defined and proceed in three separate phases:
 
 \begin{itemize}
-	\item \texttt{:Refresher}
-	\item \texttt{:RefreshWorker} and \texttt{:Runner}
-	\item \texttt{:RefreshParser}
+	\item \verb|:Refresher|
+	\item \verb|:RefreshWorker| and \verb|:Runner|
+	\item \verb|:RefreshParser|
 \end{itemize}
 
 \subsubsection{Refresher}
 \label{subs:Refresher}
 
-The \texttt{:Refresher} specifies the work flow of the refresh. It tells the \textbf{ManageIQ} what refresh should be run, how to store all discovered appliances and which database schemes and tables should be affected. The major issue which this class takes care of is to identify to which provider the devices belongs to. This refresher when initiated also queues a refresh next refresh of the providers \emph{Network Manager}.
+The \verb|:Refresher| specifies the work flow of the refresh. It tells the \textbf{ManageIQ} what refresh should be run, how to store all discovered appliances and which database schemes and tables should be affected. The major issue which this class takes care of is to identify to which provider the devices belongs to. This refresher when initiated also queues a refresh next refresh of the providers \emph{Network Manager}.
 
 \subsubsection{Refresh Worker}
 \label{subs:Refresh Worker}
 
-The worker is a specification of the way how import is proceed. Normally none modifications to the standard process is required. So it is for this provider. Each provider needs a \texttt{:RefreshWorker} in order to register the run of refresh. The naming conventions and scheme of \textbf{ManageIQ} requires also the \texttt{:Runner} sub-class to be defined. Both of them inherits all the functionality from the base cloud manager's refresh worker.
+The worker is a specification of the way how import is proceed. Normally none modifications to the standard process is required. So it is for this provider. Each provider needs a \verb|:RefreshWorker| in order to register the run of refresh. The naming conventions and scheme of \textbf{ManageIQ} requires also the \verb|:Runner| sub-class to be defined. Both of them inherits all the functionality from the base cloud manager's refresh worker.
 
 \subsubsection{Refresh Parser}
 \label{subs:Refresh Parser}
@@ -422,7 +422,7 @@ This class is the most important part of the refresh process. It defines which d
 
 As we elaborated in the Subsection~\ref{sub:Regions, Zones and Data centers}, there are no sufficient \emph{Availability Zones} present in \textbf{IBM SoftLayer}. On the other hand each cloud manager requires a \emph{Zone} to be defined. To satisfy this need the new default zone has been created. It does not effect any operation over the provider but for the internal needs of the data hierarchy inside \textbf{ManageIQ}'s database it is present.
 
-To preserve the naming conventions of \textbf{ManageIQ} even in this case it is required to use two separate mapping functions. The first one, normally used to fetch data from provider, now creates a list containing one element, the default zone. Then it lets to parse it via the second function and store it into the designated place. It's been used a modified instance of \texttt{Fog::Model} as the default zone~\ref{code:fog_model_zone}. This approach has been used instead of defining a special class for the zone because there is no need to have such class available in the namespace. There is always going to be only one instance present in total and only during the refresh.
+To preserve the naming conventions of \textbf{ManageIQ} even in this case it is required to use two separate mapping functions. The first one, normally used to fetch data from provider, now creates a list containing one element, the default zone. Then it lets to parse it via the second function and store it into the designated place. It's been used a modified instance of \verb|Fog::Model| as the default zone~\ref{code:fog_model_zone}. This approach has been used instead of defining a special class for the zone because there is no need to have such class available in the namespace. There is always going to be only one instance present in total and only during the refresh.
 
 \begin{lstlisting}[language=Ruby,caption={Declaration of the default \emph{Availability Zone}},label=code:fog_model_zone,float=htpb]
 # Create new fog model
@@ -441,12 +441,12 @@ a_zones = [default_zone]
 	\caption{\emph{Availability Zone} attributes mapping}\label{tab:Availability Zone attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute          & Corresponding value                                                                \\
+		Attribute       & Corresponding value                                                              \\
 		\midrule
-		ID                 & \texttt{availability\_zone.id.downcase}                                            \\
-		\texttt{:type}     & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::AvailabilityZone.name} \\
-		\texttt{:ems\_ref} & \texttt{availability\_zone.id.downcase}                                            \\
-		\texttt{:name}     & \texttt{availability\_zone.name}                                                   \\
+		ID              & \verb|availability_zone.id.downcase|                                             \\
+		\verb|:type|    & \small\verb|ManageIQ::Providers::Softlayer::CloudManager::AvailabilityZone.name| \\
+		\verb|:ems_ref| & \verb|availability_zone.id.downcase|                                             \\
+		\verb|:name|    & \verb|availability_zone.name|                                                    \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -454,19 +454,19 @@ a_zones = [default_zone]
 \subsection{Authentication Key Pairs}
 \label{sub:Authentication Key Pairs}
 
-Since \textbf{ManageIQ} aims to completely manage over different providers besides monitoring purposes it is essential to provide user with possibility to connect to the machine. While there are any \emph{Authentication Key Pairs} attached to the device this is the class which takes care of them. Each key pair when created contains a name and and fingerprint. This provider specifies the key par with label as a name and a certificate as a fingerprint. Fetching \emph{Authentication Key Pairs} from provider is easy via \emph{Fog} by a simple run of \texttt{compute.key\_pairs.all} command.
+Since \textbf{ManageIQ} aims to completely manage over different providers besides monitoring purposes it is essential to provide user with possibility to connect to the machine. While there are any \emph{Authentication Key Pairs} attached to the device this is the class which takes care of them. Each key pair when created contains a name and and fingerprint. This provider specifies the key par with label as a name and a certificate as a fingerprint. Fetching \emph{Authentication Key Pairs} from provider is easy via \emph{Fog} by a simple run of \verb|compute.key_pairs.all| command.
 
 \begin{table}[ht]
 	\centering
 	\caption{\emph{Authentication Key Pair} attributes mapping}\label{tab:Authentication Key Pair attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute             & Corresponding value                                                           \\
+		Attribute           & Corresponding value                                                         \\
 		\midrule
-		ID                    & \texttt{key\_pair.id}                                                         \\
-		\texttt{:type}        & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::AuthKeyPair.name} \\
-		\texttt{:name}        & \texttt{key\_pair.label}                                                      \\
-		\texttt{:fingerprint} & \texttt{key\_pair.key}                                                        \\
+		ID                  & \verb|key_pair.id|                                                          \\
+		\verb|:type|        & \small\verb|ManageIQ::Providers::Softlayer::CloudManager::AuthKeyPair.name| \\
+		\verb|:name|        & \verb|key_pair.label|                                                       \\
+		\verb|:fingerprint| & \verb|key_pair.key|                                                         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -474,7 +474,7 @@ Since \textbf{ManageIQ} aims to completely manage over different providers besid
 \subsection{Flavors}
 \label{sub:Flavors}
 
-What \emph{Flavors} are was already discussed if Flavors~\ref{sub:Hardware flavors}. \emph{Fog} allows to list all available \emph{Flavors} via \texttt{compute.flavors.all} command. The Code~\ref{code:fog_flavors}. All data available about the flavor ale listed in plain format except the disk sizes. The total size has to be counted for each \emph{Flavor} separately by summing sizes of all available disks.
+What \emph{Flavors} are was already discussed if Flavors~\ref{sub:Hardware flavors}. \emph{Fog} allows to list all available \emph{Flavors} via \verb|compute.flavors.all| command. The Code~\ref{code:fog_flavors}. All data available about the flavor ale listed in plain format except the disk sizes. The total size has to be counted for each \emph{Flavor} separately by summing sizes of all available disks.
 
 \begin{lstlisting}[language=Ruby,caption={Sample of \emph{Flavors} data},label=code:fog_flavors,float=htpb]
 # Fetch Flavors from SoftLayer
@@ -493,17 +493,17 @@ compute.flavors.first
 	\caption{\emph{Flavor} attributes mapping}\label{tab:Flavor attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute                  & Corresponding value                                                      \\
+		Attribute              & Corresponding value                                                    \\
 		\midrule
-		ID                         & \texttt{flavor.id}                                                       \\
-		\texttt{:type}             & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::Flavor.name} \\
-		\texttt{:ems\_ref}         & \texttt{flavor.id}                                                       \\
-		\texttt{:name}             & \texttt{flavor.id}                                                       \\
-		\texttt{:description}      & \texttt{flavor.name}                                                     \\
-		\texttt{:cpus}             & \texttt{flavor.cpu}                                                      \\
-		\texttt{:cpu\_cores}       & \texttt{flavor.cpu}                                                      \\
-		\texttt{:memory}           & \texttt{flavor.ram * 1.megabyte}                                         \\
-		\texttt{:root\_disk\_size} & Counted separately, data taken from \texttt{flavor.disk}                 \\
+		ID                     & \verb|flavor.id|                                                       \\
+		\verb|:type|           & \small\verb|ManageIQ::Providers::Softlayer::CloudManager::Flavor.name| \\
+		\verb|:ems_ref|        & \verb|flavor.id|                                                       \\
+		\verb|:name|           & \verb|flavor.id|                                                       \\
+		\verb|:description|    & \verb|flavor.name|                                                     \\
+		\verb|:cpus|           & \verb|flavor.cpu|                                                      \\
+		\verb|:cpu_cores|      & \verb|flavor.cpu|                                                      \\
+		\verb|:memory|         & \verb|flavor.ram * 1.megabyte|                                         \\
+		\verb|:root_disk_size| & Counted separately, data taken from \verb|flavor.disk|                 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -513,13 +513,13 @@ compute.flavors.first
 
 This is the most important commodity that has being imported and discovered. Each \emph{Virtual Machine} caries information about its name, domain, hardware configuration and even \emph{Flavor}, \emph{Image} which it is based upon or \emph{Authentication key pairs} attached. The attribute mapping is described in Table~\ref{tab:Virtual Machine attributes mapping}. Every attribute listed is successfully mapped except the \emph{Disks} discovery. The \emph{Softlayer API} described in the Subsection~\ref{sub:Standard REST API} provides every piece of information needed except the effective disk size. Currently it's been decided to wait until the support for this value is in place. For now no disks are mapped for any \emph{Virtual Machine} in this provider but the functionality is prepared so once these data are available, it can be easily updated.
 
-Each \emph{Virtual Machine} once mapped into the \textbf{ManageIQ} offers an interface for its power management. This management also has to be binded to propagate the requests into the provider. This is done via sub-class \texttt{:VM} and its management modules \texttt{:Operations::Power} and \texttt{:Operations::Guest}. \textbf{IBM Softlayer} and \texttt{fog-softlayer} allows to:
+Each \emph{Virtual Machine} once mapped into the \textbf{ManageIQ} offers an interface for its power management. This management also has to be binded to propagate the requests into the provider. This is done via sub-class \verb|:VM| and its management modules \verb|:Operations::Power| and \verb|:Operations::Guest|. \textbf{IBM Softlayer} and \texttt{fog-softlayer} allows to:
 
 \begin{itemize}
-	\item Switch of the instance via \texttt{instace.stop}
-	\item Turn back on using \texttt{instance.start}
-	\item Reboot the appliance by \texttt{instance.reboot}
-	\item And finally terminate it by invoking the \texttt{instance.destroy} command
+	\item Switch of the instance via \verb|instace.stop|
+	\item Turn back on using \verb|instance.start|
+	\item Reboot the appliance by \verb|instance.reboot|
+	\item And finally terminate it by invoking the \verb|instance.destroy| command
 \end{itemize}
 
 Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pause} or \emph{Hibernate} the instance.
@@ -529,27 +529,27 @@ Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pau
 	\caption{\emph{Virtual Machine} attributes mapping}\label{tab:Virtual Machine attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute                         & Corresponding value                                                  \\
+		Attribute                    & Corresponding value                                                \\
 		\midrule
-		ID                                & \texttt{instance.id.to\_s}                                           \\
-		\texttt{:type}                    & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::VM.name} \\
-		\texttt{:uid\_ems}                & \texttt{instance.id.to\_s}                                           \\
-		\texttt{:ems\_ref}                & \texttt{instance.id.to\_s}                                           \\
-		\texttt{:name}                    & \texttt{``\#{instance.name}.\#{instance.domain}''}                   \\
-		\texttt{:vendor}                  & \texttt{``softlayer''}                                               \\
-		\texttt{:raw\_power\_state}       & \texttt{instance.state}                                              \\
-		\texttt{:flavor}                  & \texttt{instance.flavor\_id}                                         \\
-		\texttt{:operating\_system}       & \texttt{{:product\_name => instance.os\_code}}                       \\
-		\texttt{:availability\_zone}      & Fetched the defaulf \emph{Availability Zone} from data storage       \\
-		\texttt{:key\_pairs}              & Fetched from data storage                                            \\
+		ID                           & \verb|instance.id.to_s|                                            \\
+		\verb|:type|                 & \small\verb|ManageIQ::Providers::Softlayer::CloudManager::VM.name| \\
+		\verb|:uid_ems|              & \verb|instance.id.to_s|                                            \\
+		\verb|:ems_ref|              & \verb|instance.id.to_s|                                            \\
+		\verb|:name|                 & \verb|"#{instance.name}.#{instance.domain}"|                       \\
+		\verb|:vendor|               & \verb|"softlayer"|                                                 \\
+		\verb|:raw_power_state|      & \verb|instance.state|                                              \\
+		\verb|:flavor|               & \verb|instance.flavor_id|                                          \\
+		\verb|:operating_system|     & \verb|{:product_name => instance.os_code}|                         \\
+		\verb|:availability_zone|    & Fetched the defaulf \emph{Availability Zone} from data storage     \\
+		\verb|:key_pairs|            & Fetched from data storage                                          \\
 		\midrule
 		\multicolumn{2}{l}{Hash for \texttt{:hardware} information}                                              \\
 		\midrule
-		\texttt{:cpu\_sockets}            & \texttt{instance.cpu}                                                \\
-		\texttt{:cpu\_total\_cores}       & \texttt{instance.cpu}                                                \\
-		\texttt{:cpu\_cores\_per\_socket} & 1                                                                    \\
-		\texttt{:memory\_mb}              & \texttt{instance.ram}                                                \\
-		\texttt{:disks}                   & Not effectively populated                                            \\
+		\verb|:cpu_sockets|          & \verb|instance.cpu|                                                \\
+		\verb|:cpu_total_cores|      & \verb|instance.cpu|                                                \\
+		\verb|:cpu_cores_per_socket| & 1                                                                  \\
+		\verb|:memory_mb|            & \verb|instance.ram|                                                \\
+		\verb|:disks|                & Not effectively populated                                          \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -564,16 +564,16 @@ In each Region there are specific \emph{Images} available. There are \emph{Publi
 	\caption{\emph{Image} attributes mapping}\label{tab:Image attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute                     & Corresponding value                                                        \\
+		Attribute                  & Corresponding value                                                      \\
 		\midrule
-		ID                            & \texttt{image.id}                                                          \\
-		\texttt{:type}                & \small\texttt{ManageIQ::Providers::Softlayer::CloudManager::Template.name} \\
-		\texttt{:uid\_ems}            & \texttt{image.id}                                                          \\
-		\texttt{:ems\_ref}            & \texttt{image.id}                                                          \\
-		\texttt{:name}                & \texttt{image.name}                                                        \\
-		\texttt{:vendor}              & \texttt{``softlayer''}                                                     \\
-		\texttt{:tempalte}            & \texttt{true}                                                              \\
-		\texttt{:publicly\_available} & \texttt{image.public?}                                                     \\
+		ID                         & \verb|image.id|                                                          \\
+		\verb|:type|               & \small\verb|ManageIQ::Providers::Softlayer::CloudManager::Template.name| \\
+		\verb|:uid_ems|            & \verb|image.id|                                                          \\
+		\verb|:ems_ref|            & \verb|image.id|                                                          \\
+		\verb|:name|               & \verb|image.name|                                                        \\
+		\verb|:vendor|             & \verb|"softlayer"|                                                       \\
+		\verb|:tempalte|           & \verb|true|                                                              \\
+		\verb|:publicly_available| & \verb|image.public?|                                                     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -592,7 +592,7 @@ The issue is that \textbf{ManageIQ} currently does not offer a way how to propag
 The default provision model used in \textbf{ManageIQ} is \emph{Cloning}. But it does not refer to cloning in a sense of replicating an already available instance. It is used for the \emph{Image} deployment into a new \emph{Virtal Machine}.
 The work flow basically follows the standard form used by the \texttt{fog-softlayer} seen in the Code~\ref{code:fog_compute}. The user select via web UI the desired \emph{Image}, specifies \emph{Flavor}, \emph{Cloud Subnetworks} and declares the name and domain to use for the newly created device.
 
-The code in the back end then proceeds user input and based on his selection prepares a \texttt{cloning\_options} hash. The source code bellow describes a function to prepare such data for \textbf{IBM Softlayer}.
+The code in the back end then proceeds user input and based on his selection prepares a \verb|cloning_options| hash. The source code bellow describes a function to prepare such data for \textbf{IBM Softlayer}.
 
 \begin{lstlisting}[language=Ruby,caption={Prepare cloning options},label=code:cloning,float=htpb]
 def prepare_for_clone_task
@@ -625,16 +625,16 @@ end
 \section{Network Manager}
 \label{sec:Network Manager}
 
-In order to connect and visualize relations of discovered devices ManageIQ brings the class \texttt{NetworkManager}. A separate \emph{Network Manager} is currently a new feature included into \textbf{ManageIQ}. The \textbf{IBM Softlayer} is one of the first provides adapting this structure. The current implementation uses as a default the \emph{Cloud Manager} which is delegating some of the workload onto this manager. This manager has it's own refresh capabilities and the refresh and discovery is it's main purpose. Today neither \textbf{ManageIQ} not \texttt{fog-softlayer} is capable of manipulating with networks. This layer is static for display and monitoring purposes.
+In order to connect and visualize relations of discovered devices ManageIQ brings the class \verb|NetworkManager|. A separate \emph{Network Manager} is currently a new feature included into \textbf{ManageIQ}. The \textbf{IBM Softlayer} is one of the first provides adapting this structure. The current implementation uses as a default the \emph{Cloud Manager} which is delegating some of the workload onto this manager. This manager has it's own refresh capabilities and the refresh and discovery is it's main purpose. Today neither \textbf{ManageIQ} not \texttt{fog-softlayer} is capable of manipulating with networks. This layer is static for display and monitoring purposes.
 
-The main change while this manager is connecting to the provider's API is it's using the \texttt{Fog::Network} service instead of the \texttt{Fog::Compute}. The connection to this service is made analogically as for the compute service so the following text is referring to the \texttt{network} variable described at Code~\ref{code:fog_compute}.
+The main change while this manager is connecting to the provider's API is it's using the \verb|Fog::Network| service instead of the \verb|Fog::Compute|. The connection to this service is made analogically as for the compute service so the following text is referring to the \verb|network| variable described at Code~\ref{code:fog_compute}.
 
 \subsection{Network Refresh}
 \label{sub:Network Refresh}
 
-In the core the purpose of \emph{Network Refresh} is the same as for the \emph{Cloud Refresh}. And the work flow is also the same: this refresh requires the same steps to be implemented (\texttt{:Refresher}, \texttt{:RefreshWorker}, \texttt{:Runner} and \texttt{:RefreshParser}). They provides the same role which has already been explained.
+In the core the purpose of \emph{Network Refresh} is the same as for the \emph{Cloud Refresh}. And the work flow is also the same: this refresh requires the same steps to be implemented (\verb|:Refresher|, \verb|:RefreshWorker|, \verb|:Runner| and \verb|:RefreshParser|). They provides the same role which has already been explained.
 
-The \texttt{:RefreshParser} is capable of exploration over:
+The \verb|:RefreshParser| is capable of exploration over:
 
 \begin{itemize}
 	\item \emph{Cloud Networks} and \emph{Cloud Subetworks}
@@ -642,7 +642,7 @@ The \texttt{:RefreshParser} is capable of exploration over:
 	\item \emph{Network Routers}
 \end{itemize}
 
-Each component's discovery is initiated via call to a corresponding function. In network discovery these functions are registered: \texttt{get\_cloud\_network}, \texttt{get\_network\_ports}, \\ \texttt{get\_cloud\_subnets\,(cloud\_network)} and \texttt{get\_network\_routers}.
+Each component's discovery is initiated via call to a corresponding function. In network discovery these functions are registered: \verb|get_cloud_network|, \verb|get_network_ports|, \\ \verb|get_cloud_subnets\,(cloud_network)| and \verb|get_network_routers|.
 
 \subsection{Cloud Networks}
 \label{sub:Cloud Networks}
@@ -650,8 +650,8 @@ Each component's discovery is initiated via call to a corresponding function. In
 It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Networks}. They are used as a labels without networking attributes yet defining the connection and subnetwork purpose. There exist two types of such networks and according to that a specific sub-class has been created for each of them:
 
 \begin{itemize}
-	\item \texttt{:CloudNetwork::Public} for public networks that interface the Internet and outer connects outside of the data center.
-	\item \texttt{:CloudNetwork::Private} which purpose is to connect the device with each other and with network storage or any other internal service within the data center
+	\item \verb|:CloudNetwork::Public| for public networks that interface the Internet and outer connects outside of the data center.
+	\item \verb|:CloudNetwork::Private| which purpose is to connect the device with each other and with network storage or any other internal service within the data center
 \end{itemize}
 
 \begin{table}[ht]
@@ -660,19 +660,19 @@ It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Network
 	\tabcolsep=4pt
 	\begin{tabular}{ll}
 		\toprule
-		Attribute                 & Corresponding value                                                             \\
+		Attribute              & Corresponding value                                                         \\
 		\midrule
-		ID                        & \texttt{cloud\_network.id.to\_s}                                                \\
-		\texttt{:type}            & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::CloudNetwork''} \\
-		                          & + suffix (\small{\texttt{``::Private''}} or \small{\texttt{``::Public''}})      \\
-		\texttt{:ems\_ref}        & \texttt{cloud\_network.id.to\_s}                                                \\
-		\texttt{:name}            & \texttt{cloud\_network.name} if present or a custom string                      \\
-		                          & \texttt{``Public''} (or \texttt{``Public''}) \texttt{``VLAN on <hostname>''}    \\
-		\texttt{:status}          & \texttt{``active''}                                                             \\
-		\texttt{:cidr}            & \texttt{nil}                                                                    \\
-		\texttt{:enabled}         & \texttt{true}                                                                   \\
-		\texttt{:cloud\_subnets}  & Initiated discovery and fetched the data from local storage                     \\
-		\texttt{:network\_router} & \texttt{cloud\_network.router}                                                  \\
+		ID                     & \verb|cloud_network.id.to_s|                                                \\
+		\verb|:type|           & \small\verb|"ManageIQ::Providers::Softlayer::NetworkManager::CloudNetwork"| \\
+		                       & + suffix (\small{\verb|"::Private"|} or \small{\verb|"::Public"|})          \\
+		\verb|:ems_ref|        & \verb|cloud_network.id.to_s|                                                \\
+		\verb|:name|           & \verb|cloud_network.name| if present or a custom string                     \\
+		                       & \verb|"Public"| (or \verb|"Public"|) \verb|"VLAN on <hostname>"|            \\
+		\verb|:status|         & \verb|"active"|                                                             \\
+		\verb|:cidr|           & \verb|nil|                                                                  \\
+		\verb|:enabled|        & \verb|true|                                                                 \\
+		\verb|:cloud_subnets|  & Initiated discovery and fetched the data from local storage                 \\
+		\verb|:network_router| & \verb|cloud_network.router|                                                 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -682,7 +682,7 @@ It's already been described how \textbf{IBM Softlayer} treat \emph{Cloud Network
 
 In case of \emph{Cloud Subnets} the situation is a bit more difficult. These networks are not directly displayed via \emph{Fog} like the other network components. However both entities using and interfacing these subnetworks contains desired data. These two entities are \emph{Cloud Networks} and \emph{Network Ports}. Each of them provides enough data to register a subnet. It is considered as a better practice while describing components to start from greater picture to smaller parts. The \emph{Cloud Network} can be considered as a bigger and more important component because it can contain more \emph{Network Ports} and represents a parent for each \emph{Cloud Subnet}.
 
-While running discovery over a \emph{Cloud Network} all related subnetworks are discovered too. This behavior is ensured by calling \texttt{get\_cloud\_subnets\,(cloud\_network)} during parsing action for each network. When all subnets are found they are parsed, registered and stored int \textbf{ManageIQ}'s local storage. Later, when the refresh process reaches the \emph{Network Ports} discovery, their identificators are found and they can be found in the database and linked to the port.
+While running discovery over a \emph{Cloud Network} all related subnetworks are discovered too. This behavior is ensured by calling \verb|get_cloud_subnets\,(cloud_network)| during parsing action for each network. When all subnets are found they are parsed, registered and stored int \textbf{ManageIQ}'s local storage. Later, when the refresh process reaches the \emph{Network Ports} discovery, their identificators are found and they can be found in the database and linked to the port.
 
 \begin{table}[ht]
 	\centering
@@ -690,17 +690,17 @@ While running discovery over a \emph{Cloud Network} all related subnetworks are 
 	\tabcolsep=1pt
 	\begin{tabular}{ll}
 		\toprule
-		Attribute                    & Corresponding value                                                            \\
+		Attribute                 & Corresponding value                                                        \\
 		\midrule
-		ID                           & \texttt{cloud\_subnet.id.to\_s}                                                \\
-		\texttt{:type}               & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::CloudSubnet''} \\
-		\texttt{:ems\_ref}           & \texttt{cloud\_subnet.id.to\_s}                                                \\
-		\texttt{:name}               & \texttt{cloud\_network\_name}                                                  \\
-		\texttt{:cidr}               & \texttt{``\#{cloud\_subnet.network\_id}/\#{subnet.cidr}''}                     \\
-		\texttt{:ip\_version}        & \texttt{cloud\_subnet.ip\_version}                                             \\
-		\texttt{:network\_protocol}  & \texttt{``ipv\#{cloud\_subnet.ip\_version}''}                                  \\
-		\texttt{:gateway}            & \texttt{cloud\_subnet.gateway\_ip}                                             \\
-		\texttt{:availability\_zone} & Fetch the default \emph{Availability Zone}                                     \\
+		ID                        & \verb|cloud_subnet.id.to_s|                                                \\
+		\verb|:type|              & \small\verb|"ManageIQ::Providers::Softlayer::NetworkManager::CloudSubnet"| \\
+		\verb|:ems_ref|           & \verb|cloud_subnet.id.to_s|                                                \\
+		\verb|:name|              & \verb|cloud_network_name|                                                  \\
+		\verb|:cidr|              & \verb|"#{cloud_subnet.network_id}/#{subnet.cidr}"|                         \\
+		\verb|:ip_version|        & \verb|cloud_subnet.ip_version|                                             \\
+		\verb|:network_protocol|  & \verb|"ipv#{cloud_subnet.ip_version}"|                                     \\
+		\verb|:gateway|           & \verb|cloud_subnet.gateway_ip|                                             \\
+		\verb|:availability_zone| & Fetch the default \emph{Availability Zone}                                 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -710,7 +710,7 @@ While running discovery over a \emph{Cloud Network} all related subnetworks are 
 
 Running the \emph{Network Ports} refresh process is the next step in order to complete whole network discovery. \emph{Network Ports} are used as a virtual replacement of physical network interfaces. Their data are available via querying each \emph{Virtual Machine}. To achieve and access it the refresh process of corresponding \emph{Cloud Manager} has to be run before the \emph{Network Manager}.
 
-Since the \emph{Network Subnets} were already discovered using the networks, now it only remains to map them to maintain and register the connection inside \textbf{ManageIQ}. This is done by a special mapping functionality. While specifying a mapping key \\ \texttt{:cloud\_subnet\_network\_ports} in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network Subnets}. This is due to \texttt{ManageIQ} internal mapping and database scheme where the information for each \emph{Network Port} to \emph{Cloud Subnet} relation is stored inside the \emph{Cloud Subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network Port} on more subnets.
+Since the \emph{Network Subnets} were already discovered using the networks, now it only remains to map them to maintain and register the connection inside \textbf{ManageIQ}. This is done by a special mapping functionality. While specifying a mapping key \\ \verb|:cloud_subnet_network_ports| in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network Subnets}. This is due to \textbf{ManageIQ} internal mapping and database scheme where the information for each \emph{Network Port} to \emph{Cloud Subnet} relation is stored inside the \emph{Cloud Subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network Port} on more subnets.
 
 \begin{lstlisting}[language=Ruby,caption={\emph{Network port} to \emph{Cloud subnet} mapping},label=code:port_to_subnet]
 # Using a convertor for a relation in opposite direction
@@ -725,18 +725,18 @@ network_port[:cloud_subnet_network_ports] = [{
 	\caption{\emph{Network Port} attributes mapping}\label{tab:Network Port attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute              & Corresponding value                                                            \\
+		Attribute           & Corresponding value                                                        \\
 		\midrule
-		ID                     & \texttt{network\_port.id.to\_s}                                                \\
-		\texttt{:type}         & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::NetworkPort''} \\
-		\texttt{:ems\_ref}     & \texttt{network\_port.id.to\_s}                                                \\
-		\texttt{:name}         & \texttt{``\#{network\_port.name}\#{network\_port.port}''} if provided          \\
-		                       & \texttt{network\_port.mac\_address} otherwise                                  \\
-		\texttt{:status}       & \texttt{network\_port.status.downcase}                                         \\
-		\texttt{:mac\_address} & \texttt{network\_port.mac\_address}                                            \\
-		\texttt{:device\_ref}  & \texttt{device\_ref}                                                           \\
-		\texttt{:device}       & \texttt{parent\_manager\_fetch\_path\,(:vms, device\_ref)}                     \\
-		\texttt{:fixed\_ips}   & \texttt{network\_port.primary\_ip\_address}                                    \\
+		ID                  & \verb|network_port.id.to_s|                                                \\
+		\verb|:type|        & \small\verb|"ManageIQ::Providers::Softlayer::NetworkManager::NetworkPort"| \\
+		\verb|:ems_ref|     & \verb|network_port.id.to_s|                                                \\
+		\verb|:name|        & \verb|"#{network_port.name}#{network_port.port}"}| if provided             \\
+		                    & \verb|network_port.mac_address| otherwise                                  \\
+		\verb|:status|      & \verb|network_port.status.downcase|                                        \\
+		\verb|:mac_address| & \verb|network_port.mac_address|                                            \\
+		\verb|:device_ref|  & \verb|device_ref|                                                          \\
+		\verb|:device|      & \verb|parent_manager_fetch_path\,(:vms, device_ref)|                       \\
+		\verb|:fixed_ips|   & \verb|network_port.primary_ip_address|                                     \\
 		\midrule
 		\multicolumn{2}{l}{\texttt{:cloud\_subnet\_network\_ports} --- see the Code~\ref{code:port_to_subnet}} \\
 		\bottomrule
@@ -753,12 +753,12 @@ The only remaining network component to import is a \emph{Network Router}. Route
 	\caption{\emph{Network Router} attributes mapping}\label{tab:Network Router attributes mapping}
 	\begin{tabular}{ll}
 		\toprule
-		Attribute          & Corresponding value                                                              \\
+		Attribute       & Corresponding value                                                          \\
 		\midrule
-		ID                 & \texttt{network\_router[``id''].to\_s}                                           \\
-		\texttt{:type}     & \small\texttt{``ManageIQ::Providers::Softlayer::NetworkManager::NetworkRouter''} \\
-		\texttt{:ems\_ref} & \texttt{network\_router[``id''].to\_s}                                           \\
-		\texttt{:name}     & \texttt{network\_router[``hostname'']}                                           \\
+		ID              & \verb|network_router["id"].to_s|                                             \\
+		\verb|:type|    & \small\verb|"ManageIQ::Providers::Softlayer::NetworkManager::NetworkRouter"| \\
+		\verb|:ems_ref| & \verb|network_router["id"].to_s|                                             \\
+		\verb|:name|    & \verb|network_router["hostname"]|                                            \\
 		\bottomrule
 	\end{tabular}
 \end{table}
