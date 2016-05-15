@@ -356,20 +356,38 @@ A project named \textbf{ManageIQ} is an open-source technology developed by comm
 \chapter{Implemented Interfaces}
 \label{chap:Implemented Interfaces}
 
-\todo{How to interface in ManageIQ}
+\textbf{ManageIQ} uses a hierarchical scheme of models. While adding a new provider it is a \verb|ManageIQ::Providers| which has to be implemented. For \textbf{IBM SoftLayer} as a cloud provider there are 3 main parts, classes required:
 
-\section{Common Interface}
-\label{sec:Common Interface}
+\begin{itemize}
+	\item \verb|"ManageIQ::Providers::Softlayer::CloudManager"| for the appliances management
+	\item \verb|"ManageIQ::Providers::Softlayer::NetworkManager"| for networking
+	\item \verb|"ManageIQ::Providers::Regions"| enlisting all available \emph{Regions}
+\end{itemize}
 
-\todo{Files placed at, base managers, controllers}
+Both of the managers inherits from their \emph{Base Manager}, for example fo the \emph{Cloud Manager} it is \verb|"ManageIQ::Providers::CloudManager"|. These managers implements the behavioral principles for \emph{Cloud Refresh} or event driven management purposes. In order to store a connection bindings, which are common for both, there is a special \emph{Manager Mixin}.
 
-\subsection{Connection Management}
-\label{sub:Connection Management}
+These models are places in the \verb|app/models/manageiq/providers/<provider>| folder where \verb|<provider>| addres the implemented provider. While this thesis is describing the implementation of the \textbf{IBM SoftLayer}, let's consider as a \verb|<provider_root>| the folder \verb|app/models/manageiq/providers/softlayer|.
 
-\todo{ManagerMixin}
+In the \verb|app/models/manageiq/providers/softlayer/| folder there can be found (the main components):
 
-\subsection{Regions}
-\label{sub:Regions}
+\begin{itemize}
+	\item \verb|regions.rb| as a \emph{Regions} storage
+	\item \verb|manager_mixin.rb| for the \emph{Manager Mixin}
+	\item \verb|cloud_manager.rb| defining the \emph{Cloud Manager} behavior
+	\item \verb|cloud_manager| folder containing all components required by the manager
+	\item \verb|network_manager.rb| containing the \emph{Network Manager}
+	\item \verb|network_manager| folder with analogical content for this manager
+\end{itemize}
+
+The following sections describe each one of them.
+
+\section{Connection Management}
+\label{sec:Connection Management}
+
+The connection is a common feature and requirement for both of the implemented managers. This connection handler is kept separated from them for easier maintenance. The class for that is called \emph{Manager Mixin}. This mixin also contains the basic \emph{Discovery} work flow described bellow in the Section~\ref{sec:Discovery}. But the main purpose of the mixin remains as establishing the connection via \emph{Fog}, verifying credentials and providing the manager with proper service.
+
+\section{Regions}
+\label{sec:Regions}
 
 What \emph{Regions} are has already been described. However for the integration purposes it's needed to understand how they are treated in the \textbf{ManageIQ}.
 
@@ -377,12 +395,11 @@ When user is adding a new provider he has to specify the \emph{Region}. Basicall
 
 It is also required to list all available regions before user connects to the provider. The application uses one step form for adding a provider so he has to be able to specify the \emph{Region} before his credentials are proceed. And since every API client requires to authenticate before any actions can be done, it is required to list all regions statically in a file \verb|<provider_root>regions.rb|.
 
-\subsection{Discovery}
-\label{sub:Discovery}
+\section{Discovery}
+\label{sec:Discovery}
 
 The work flow described above can be slightly inconvenient when user already has his devices in many \emph{Regions}. For such situations there is a \emph{Dicovery} process. There the user just specifies his credentials and the process does the work for him. The application places his dicovery into a \textbf{MiqQueue} and while the discovery is proceed it iterates over every \emph{Region}. While there are \emph{Virtual machines} present in the region, it registered as a new provider and its \emph{Refresh} is scheduled. This work flow is specified in the \verb|ManagerMixin| class.
 
-\clearpage
 \section{Cloud Manager}
 \label{sec:Cloud Manager}
 
