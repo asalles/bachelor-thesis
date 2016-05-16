@@ -244,7 +244,7 @@ FUNCTION {bbl.edition}
 { "edition" }
 
 FUNCTION {bbl.volume}
-{ "volume." }
+{ "vol." }
 
 FUNCTION {bbl.of}
 { "" }
@@ -253,13 +253,13 @@ FUNCTION {bbl.number}
 { "number" }
 
 FUNCTION {bbl.nr}
-{ "nr." }
+{ "no." }
 
 FUNCTION {bbl.in}
 { "in" }
 
 FUNCTION {bbl.pages}
-{ "p." }
+{ "pp." }
 
 FUNCTION {bbl.page}
 { "page" }
