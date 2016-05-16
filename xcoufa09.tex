@@ -3,7 +3,7 @@
 % Update: Ing. Jaroslav Dytrych <idytrych@fit.vutbr.cz> (2016)
 % Modified: Tomas Coufal <ixcoufa09@stud.fit.vutbr.cz> (2016)
 
-\documentclass[english,print]{fitthesis}
+\documentclass[english,zadani,print]{fitthesis}
 % add 'print' when rendered for print
 % add 'zadani' when the zadani.pdf should be included.
 
@@ -99,18 +99,18 @@
 }
 
 % Abstract
-\abstract[cs]{Cloudová řešení počítačové infrastuktury jsou dnes běžnou realitou. A to jak v malých firmách tak i v těch největších. Velmi často se zákazník nespoléhá pouze na jednoho poskytovatele a dostupná řešení různě kombinuje. Takovýto komplexní systém však není snadné efektivně řídit. Proto existují projekty jako ManageIQ, které zprostředkovávají správu nad mnoha dodavateli. Záběr je velmi široký \.--\. od poskytovatelů virtuálních a fyzických serverů, platforem a kontainerů až po správu webových aplikací. Pro cloudové managery, jak se projekty typu ManageIQ nazývají, je klíčové nabízet možnost propojit co nejvíce řešení. Tato práce pojednává o zajištění podpory pro IBM SoftLayer v rámci ManageIQ, tak aby byl zachován uživatelský komfort zákazníka. To zahrnuje automatické prohledávání uživatelkého prostoru, import všech vhodných součástí a možnosti pro manipulaci s existujícími prvky či vytváření nových.}
-\abstract[en]{Cloud has become a reality in the field of corporate IT infrustructures. It is not an easy task to find the right solution for a company. Although it is even more difficult to effectively manage such complex systems. This lead to invention of cloud management systems. ManageIQ is one of those projects. It offers an unified interface for many cloud providers. And including as many others as possible is crucial for its success. This thesis wants to introduce you to such process by describing the IBM SoftLayer integration. }
+\abstract[cs]{}
+\abstract[en]{While cloud computing gains its popularity the complexity of offered services is growing. There exist various different solutions and to manage them effectively is the task for cloud managers. One of them is a project named {ManageIQ}. This thesis aims to describe how to integrate a new provider into this software, what are the required bindings and how to work with the API of the provider. The thesis is describing such process on an IBM SoftLayer provider example. The achieved result enables user to manage his SoftLayer devices via ManageIQ with ease and also provides user the functionality to provision new appliances.}
 
 % Keywords
-\keywords[cs]{cloudové techologie, ManageIQ, IBM SoftLayer, Red Hat, poskytovatelé cloudu, fog, Ruby}
-\keywords[en]{cloud computing, ManageIQ, IBM SoftLayer, Red Hat, cloud providers, fog, Ruby}
+\keywords[cs]{cloudové techologie, ManageIQ, IBM SoftLayer, poskytovatelé cloudu, fog, Ruby}
+\keywords[en]{cloud computing, ManageIQ, IBM SoftLayer, cloud providers, fog, Ruby}
 
 % Declaration
-\declaration{Hereby I declare that this bachelor's thesis was prepared as an original author’s work under the supervision of Mr. Mgr. Adam Rogalevicz, Ph.D. The supplementary information was provided by members of the ManageIQ developer team. All the relevant information sources, which were used during preparation of this thesis, are properly cited and included in the list of references.}
+\declaration{Hereby I declare that this bachelor's thesis was prepared as an original author’s work under the supervision of Mr.\ Mgr.\ Adam Rogalewicz, Ph.D.\ (FIT BUT) and Mr.\ Mgr.\ Martin Povolný (Red Hat Czech, s.r.o). The supplementary information was provided by members of the ManageIQ developer team. All the relevant information sources, which were used during preparation of this thesis, are properly cited and included in the list of references.}
 
 % ACK
-\acknowledgment{Děkuji společnosti Red Hat Czech, a.s. za poskytnuté zázemí a prostředky pro testování. Velmi si cenním podpory a informací od týmu vývojářů, se kterými jsem mohl svou práci konzultovat. Převáženě si vážím znalostí Martina Povolného a Ladislava Smoly, které mi velmi pomohly a pro řešení práce byly klíčové.}
+\acknowledgment{Firstly, I would like to express my sincere gratitude to my supervisors for the continuous support in my research, for their motivation, and immense knowledge. My sincere thanks goes to ManageIQ developers team, most importantly to Bc.\ Ladislav Smola. Especially his guidance helped me in all the time of research and implementation for this thesis.}
 
 \begin{document}
 % Title page
