@@ -85,8 +85,6 @@ Last but not least there is the most low-lever approach how to provide services 
 
 Among others the IBM company also offers their own cloud solution, the so called \textbf{IBM Cloud}. It's not a standalone project, it's a summary name for whole portfolio of products. It comprises of complementary yet independent platforms and tools covering an extensive amount of application and use-cases delivering the customer adjustable setups and products. When the customer demands IaaS, \emph{IBM SoftLayer} is the product he's asking for. For platform-based requirements IBM offers a cloud service named \emph{Bluemix}. There is also a vast amount of SaaS solutions delivered by the company via their very own \emph{IBM cloud} market. Some of them based on the \emph{IBM Watson} intelligence some standalone. This complex tooling allows IBM to deliver in the cloud market environment.
 
-\todo{orphaned chapter, do something}
-
 \chapter{IBM SoftLayer}
 \label{chap:IBM SoftLayer}
 
@@ -347,14 +345,34 @@ new_instance.id
 
 A project named \textbf{ManageIQ} is an open-source technology developed by community supported and sponsored by the Red Hat company. This project aims to provide an easy management over cloud solutions across providers by offering comfortable import, appliances management, network links visualization allowing modifications and infrastructure provision capabilities. Expectations are high since all integrated technologies are different considered by functionality and capacity. To cover those variations \textbf{ManageIQ} provides abstract internal bindings that should suit most of the needs.
 
-\section{Internal Principles}
-\label{sec:Internal Principles}
+\section{Providers}
+\label{sec:Providers}
 
+Th Developer's guide~\cite{manageiq_dev} defines available bindings for each provider. Each provider is represented by a so called \emph{External Management System}. The reason for such name is mainly historic, today each provider offers a complex functionality which needs to be broken into smaller, separate managers. In the case of \textbf{IBM SoftLayer} these are the \emph{Cloud Manager} and the \emph{Network Manager}. Each of them is given it's namespace and can be derived from a base manager of that type. These managers covers, or tries to cover these areas:
 
-\todo{?}
+\begin{itemize}
+	\item \emph{Inventory} for listing and tracking all the cloud properties
+	\item \emph{Event Collection and Handling} for event driven work flows and dynamic system
+	\item \emph{Metric Collection and Handling} for analysis over inventory objects utilization etc.
+	\item \emph{Provisioning and Orchestration} is adding features to dynamically deploy new setups in the provider
+	\item \emph{Lifecycle} for managing the already deployed ones
+	\item \emph{SmartState Analysis} is a low level analysis tool for \emph{Virtual Machines} and \emph{Images}
+\end{itemize}
 
-\chapter{Implemented Interfaces}
-\label{chap:Implemented Interfaces}
+Currently, due to missing features in the API for implemented provider we are able to cover just the \emph{Inventory}, \emph{Provisioning and Orchestration} and \emph{Lifecycle} features.
+
+In general, there exist thee ways how to collect data about the provider:
+
+\begin{itemize}
+	\item \emph{Refresh Worker}
+	\item \emph{Event Worker}
+	\item \emph{Metric Worker}
+\end{itemize}
+
+Because of the reasons described above, we are currently able to implement and use just the first one of them, the \emph{Refresh Worker}. The properties imported by the refresh are listed and described below.
+
+\section{Implemented Interfaces and Models}
+\label{sec:Implemented Interfaces and Models}
 
 \textbf{ManageIQ} uses a hierarchical scheme of models. While adding a new provider it is a \verb|ManageIQ::Providers| which has to be implemented. For \textbf{IBM SoftLayer} as a cloud provider there are 3 main parts, classes required:
 
@@ -405,8 +423,9 @@ The work flow described above can be slightly inconvenient when user already has
 
 \emph{Cloud Manager} is a class specified for each provider and inherits from base \verb|CloudManager|. In this case specified as \verb|ManageIQ::Providers::Softlayer::CloudManager|. It provides an interface over the cloud devices. The main purpose of this class is to cover all functionality needed to refresh and manage \emph{Virtual Servers} and every other aspect needed in order to provision and access them. All the links between devices are discovered separately and this class does not care about internal representation of \emph{Cloud Network} etc. Nevertheless this manager maps the networking identificators of discovered devices into internal database and once the networks are discovered (done separately) the system links them together.
 
-Besides all the entities and submodules described below this manager specifies a generic bindings to \emph{Virtual Machine}'s power operations. It also specifies how the \emph{Network Manager} is related and delegates networking tasks into this manager.
+Besides all the entities and submodules described in this manager are populated by the \emph{Cloud Refresh}. It also specifies how the \emph{Network Manager} is related and delegates networking tasks into this manager.
 
+\clearpage
 \subsection{Cloud Refresh}
 \label{sub:Cloud Refresh}
 
@@ -417,6 +436,8 @@ To run a discovery service or refresh of the provider the \emph{Cloud Refresh} n
 	\item \verb|:RefreshWorker| and \verb|:Runner|
 	\item \verb|:RefreshParser|
 \end{itemize}
+
+This \emph{Refresh} is the base and most important back-end part of a new provider. It's main role is to fill the internal database with all inventory needed for further usage. The scheme which attributes and inventory models are available is defined in the Developer's guide and documentation~\cite{manageiq_dev} in the \emph{Providers database architecture} and \emph{Provider Overview} guides.
 
 \subsubsection{Refresher}
 \label{subs:Refresher}
@@ -433,6 +454,7 @@ The worker is a specification of the way how import is proceed. Normally none mo
 
 This class is the most important part of the refresh process. It defines which devices are added and where these should be registered in \textbf{ManageIQ}. Here it is specified how the mapping of each of the following entities is done between provider client library (in the case of \textbf{IBM SoftLayer} it is \texttt{fog-softlayer}) and the internal structure. Also the mapping where to store these information is done (whether the devide is \emph{Virtual Server} or \emph{Flavor} etc.).
 
+\clearpage
 \subsection{Availability Zones}
 \label{sub:Availability Zones}
 
@@ -570,6 +592,7 @@ Unfortunately \textbf{IBM SoftLayer} does not offer to \emph{Suspend}, \emph{Pau
 	\end{tabular}
 \end{table}
 
+\clearpage
 \subsection{Image Templates}
 \label{sub:Image Templates}
 
@@ -759,6 +782,7 @@ network_port[:cloud_subnet_network_ports] = [{
 	\end{tabular}
 \end{table}
 
+\clearpage
 \subsection{Network Routers}
 \label{sub:Network Routers}
 
@@ -847,4 +871,8 @@ Once these features are available, they would be implemented.
 \chapter{Conclusion}
 \label{chap:Conclusion}
 
-\todo{basic functionality covered, tested, demo}
+This thesis managed to describe how \emph{Cloud Computing} and \emph{Cloud Providers} work, how complex and diverse systems they could be. And what are the main challenges when a \textbf{ManageIQ} project tries to integrate one of them. The main focus was on the process of integration of a new provider, the \textbf{IBM SoftLayer}. This provider is a cloud vendor of the \emph{IaaS} type and offers \emph{Virtual Machines} and \emph{Bare metal Servers}.
+
+The process of integration was described by using the main ManageIQ bindings. They were elaborated in detail and used with connection of the \emph{Fog} Ruby cloud library. Each of part needed was described and show how and which values should be mapped into {ManageIQ}.
+
+Currently the result code is under a review process by upstream community. Eventually the code will merged into the upstream and will stand as a standard way for the \textbf{ManageIQ} \textbf{IBM SoftLayer} communication. To see this solution in work, do not hesitate to use the enclosed appliance and deploy it. Or you can watch a demo demonstrating the functionality too.
