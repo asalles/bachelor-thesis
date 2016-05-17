@@ -350,7 +350,12 @@ A project named \textbf{ManageIQ} is an open-source technology developed by a co
 \section{Providers}
 \label{sec:Providers}
 
-Th Developer's guide~\cite{manageiq_dev} defines available bindings for each provider. Each provider is represented by a so called \emph{External Management System}. The reason for such name is mainly historic, today each provider offers a complex functionality which needs to be broken into smaller, separate managers. In the case of \textbf{IBM SoftLayer} these are the \emph{Cloud Manager} and the \emph{Network Manager}. Each of them is given it's namespace and can be derived from a base manager of that type. These managers cover, or try to cover these areas:
+\begin{figure}[ht!]
+	\includegraphics[width=\textwidth]{fig/architecture}
+	\caption{Providers in \emph{ManageIQ}}\label{fig:Providers in ManageIQ}
+\end{figure}
+
+The Developer's guide~\cite{manageiq_dev} defines available bindings for each provider. Each provider is represented by a so called \emph{External Management System}. The reason for such name is mainly historic, today each provider offers a complex functionality which needs to be broken into smaller, separate managers. A Figure~\ref{fig:Providers in ManageIQ}  categorize the providers into the \textbf{ManageIQ}'s architecture . This reveals the overall picture how these managers are related with other parts of the framework. In the case of \textbf{IBM SoftLayer} these are the \emph{Cloud Manager} and the \emph{Network Manager}. Each of them is given it's namespace and can be derived from a base manager of that type. These managers cover, or try to cover these areas:
 
 \begin{itemize}
 	\item \emph{Inventory} for listing and tracking all the cloud properties
