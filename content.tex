@@ -140,7 +140,7 @@ On the other hand, each \emph{Data Center} is selectable. In other words, it is 
 \subsection{Servers}
 \label{sub:Servers}
 
-Once the user figures out where he can run his appliances, it's worth discovering what is being provisioned and run. In the clouds of the \emph{IaaS} type, it is usually some kind of \emph{Server}. Previously it's been mentioned~\ref{subs:Outsourcing the virtualization} that the most common type of device is a \emph{Virtual Server}, but this is not the only commodity available. For numerous security reasons, some cloud providers offer the possibility to run such a virtual server in three types of environment. \textbf{IBM SoftLayer} provides all of them.
+Once the user figures out where he can run his appliances, it's worth discovering what is being provisioned and run. In the clouds of the \emph{IaaS} type, it is usually some kind of \emph{Server}. Previously it's been mentioned~\ref{subs:Outsourcing virtualization} that the most common type of device is a \emph{Virtual Server}, but this is not the only commodity available. For numerous security reasons, some cloud providers offer the possibility to run such a virtual server in three types of environment. \textbf{IBM SoftLayer} provides all of them.
 
 \subsubsection{Shared hardware}
 \label{subs:Shared hardware}
@@ -553,12 +553,13 @@ compute.flavors.first
 	\end{tabular}
 \end{table}
 
+\clearpage
 \subsection{Virtual Machines}
 \label{sub:Virtual Machines}
 
 This is the most important commodity that has been imported and discovered. Each \emph{Virtual Machine} carries information about its name, domain, hardware configuration and even \emph{Flavor}, \emph{Image} which it is based upon or \emph{Authentication key pairs} attached. The attribute mapping is described in Table~\ref{tab:Virtual Machine attributes mapping}. Every attribute listed is successfully mapped except the \emph{Disks} discovery. The \emph{Softlayer API} described in the Subsection~\ref{sub:Standard REST API} provides every piece of information needed, except the effective disk size. Currently it's been decided to wait until the support for this value is in place. For now, no disks are mapped for any \emph{Virtual Machine} in this provider but the functionality is prepared so once these data are available, it can be easily updated.
 
-Each \emph{Virtual Machine}, once mapped into the \textbf{ManageIQ}, offers an interface for its power management. This management also has to be binded to propagate the requests into the provider. This is done via the sub-class \verb|:VM| and its management modules \verb|:Operations::Power| and \verb|:Operations::Guest|. \textbf{IBM Softlayer} and \texttt{fog-softlayer} allows to:
+Each \emph{Virtual Machine}, once mapped into the \textbf{ManageIQ}, offers an interface for its power management. This management also has to be binded to propagate the requests into the provider. This is done via the sub-class \verb|:VM| and its management modules \\ \verb|:Operations::Power| and \verb|:Operations::Guest|. \textbf{IBM Softlayer} and \texttt{fog-softlayer} allows to:
 
 \begin{itemize}
 	\item Switch off the instance via \verb|instace.stop|
@@ -690,6 +691,7 @@ The \verb|:RefreshParser| is capable of exploration over:
 
 Each component's discovery is initiated via a call to a corresponding function. In network discovery, these functions are registered: \verb|get_cloud_network|, \verb|get_network_ports|, \\ \verb|get_cloud_subnets\,(cloud_network)| and \verb|get_network_routers|.
 
+\clearpage
 \subsection{Cloud Networks}
 \label{sub:Cloud Networks}
 
@@ -713,7 +715,7 @@ It's already been described how \textbf{IBM Softlayer} treats \emph{Cloud Networ
 		                       & + suffix (\small{\verb|"::Private"|} or \small{\verb|"::Public"|})          \\
 		\verb|:ems_ref|        & \verb|cloud_network.id.to_s|                                                \\
 		\verb|:name|           & \verb|cloud_network.name| if present or a custom string                     \\
-		                       & \verb|"Public"| (or \verb|"Public"|) \verb|"VLAN on <hostname>"|            \\
+		                       & \verb|"Public"| (or \verb|"Public"|) $+$ \verb|"VLAN on <hostname>"|        \\
 		\verb|:status|         & \verb|"active"|                                                             \\
 		\verb|:cidr|           & \verb|nil|                                                                  \\
 		\verb|:enabled|        & \verb|true|                                                                 \\
@@ -723,6 +725,7 @@ It's already been described how \textbf{IBM Softlayer} treats \emph{Cloud Networ
 	\end{tabular}
 \end{table}
 
+\clearpage
 \subsection{Cloud Subnetworks}
 \label{sub:Cloud Subnetworks}
 
@@ -758,7 +761,7 @@ Running the \emph{Network Ports} refresh process is the next step in order to co
 
 Since the \emph{Network Subnets} were already discovered using the networks, now it only remains to map them to maintain and register the relation inside \textbf{ManageIQ}. This is done by a special mapping function. When specifying a mapping key \\ \verb|:cloud_subnet_network_ports| in the stored data hash, the value is internally converted into opposite relation before saving and correctly mapped onto relevant \emph{Network Subnets}. This is due to \textbf{ManageIQ}'s internal mapping and database scheme where the information for each \emph{Network Port} to \emph{Cloud Subnet} relation is stored inside the \emph{Cloud Subnet}. This is due to the fact that some providers are capable of mapping one \emph{Network Port} on more subnets.
 
-\begin{lstlisting}[language=Ruby,caption={\emph{Network port} to \emph{Cloud subnet} mapping},label=code:port_to_subnet]
+\begin{lstlisting}[language=Ruby,caption={\emph{Network port} to \emph{Cloud subnet} mapping},label=code:port_to_subnet,float=ht]
 # Using a converter for a relation in opposite direction
 network_port[:cloud_subnet_network_ports] = [{
   :address      => network_port.primary_ip_address,
@@ -776,12 +779,12 @@ network_port[:cloud_subnet_network_ports] = [{
 		ID                  & \verb|network_port.id.to_s|                                                \\
 		\verb|:type|        & \small\verb|"ManageIQ::Providers::Softlayer::NetworkManager::NetworkPort"| \\
 		\verb|:ems_ref|     & \verb|network_port.id.to_s|                                                \\
-		\verb|:name|        & \verb|"#{network_port.name}#{network_port.port}"}| if provided             \\
+		\verb|:name|        & \verb|"#{network_port.name}#{network_port.port}"| if provided              \\
 		                    & \verb|network_port.mac_address| otherwise                                  \\
 		\verb|:status|      & \verb|network_port.status.downcase|                                        \\
 		\verb|:mac_address| & \verb|network_port.mac_address|                                            \\
 		\verb|:device_ref|  & \verb|device_ref|                                                          \\
-		\verb|:device|      & \verb|parent_manager_fetch_path\,(:vms, device_ref)|                       \\
+		\verb|:device|      & \verb|parent_manager_fetch_path(:vms, device_ref)|                         \\
 		\verb|:fixed_ips|   & \verb|network_port.primary_ip_address|                                     \\
 		\midrule
 		\multicolumn{2}{l}{\texttt{:cloud\_subnet\_network\_ports} --- see the Code~\ref{code:port_to_subnet}} \\
@@ -789,7 +792,6 @@ network_port[:cloud_subnet_network_ports] = [{
 	\end{tabular}
 \end{table}
 
-\clearpage
 \subsection{Network Routers}
 \label{sub:Network Routers}
 
@@ -810,6 +812,7 @@ The only remaining network component to import is a \emph{Network Router}. Route
 	\end{tabular}
 \end{table}
 
+\clearpage
 \section{Register a provider}
 \label{sec:Register a provider}
 

@@ -145,9 +145,9 @@
 \def\@cite@CS{Citace}
 \def\@cite@SK{Citácia}
 \def\@cite@EN{Reference}
-\def\@copyright@CS{Tato práce vznikla jako školní dílo na Vysokém učení technickém v Brně, Fakultě informačních technologií. 
+\def\@copyright@CS{Tato práce vznikla jako školní dílo na Vysokém učení technickém v Brně, Fakultě informačních technologií.
 Práce je chráněna autorským zákonem a její užití bez udělení oprávnění autorem je nezákonné, s výjimkou zákonem definovaných případů.}
-\def\@copyright@SK{Táto práca vznikla ako školské dielo na FIT VUT v Brně. 
+\def\@copyright@SK{Táto práca vznikla ako školské dielo na FIT VUT v Brně.
 Práca je chránená autorským zákonom a jej využitie bez poskytnutia oprávnenia autorom je nezákonné, s výnimkou zákonne definovaných prípadov.}
 \def\@copyright@EN{This thesis was created as a school work at the Brno University of Technology, Faculty of Information Technology.
 The thesis is protected by copyright law and its use without author's explicit consent is illegal, except for cases defined by law.}
@@ -247,7 +247,7 @@ The thesis is protected by copyright law and its use without author's explicit c
 %-----------------------------------------------------------------------------
 % Projectinfo - parametrizace sablony
 %-----------------------------------------------------------------------------
-%Parametry 
+%Parametry
 \define@key{projinfo}{title.cs}{\global\def\@title@CS{#1}}
 \define@key{projinfo}{title.en}{\global\def\@title@EN{#1}}
 \define@key{projinfo}{department}{\set@department{#1}}
@@ -274,11 +274,11 @@ The thesis is protected by copyright law and its use without author's explicit c
 
 %Vychozi hodnoty
 \setkeys{projinfo}{
-  title.cs={Název práce (česky)},title.en={Název práce(anglicky)}, 
-  date=\today, project=BP, department=UIFS, declaration=, 
+  title.cs={Název práce (česky)},title.en={Název práce(anglicky)},
+  date=\today, project=BP, department=UIFS, declaration=,
   abstract.cs=, abstract.en=, keywords.cs=, keywords.en=,
   author=Jmeno Prijmeni, supervisor=Jmeno Prijmeni,
-  author.name=, author.surname=, supervisor.name=, 
+  author.name=, author.surname=, supervisor.name=,
   supervisor.surname=
 }%
 
@@ -380,9 +380,9 @@ The thesis is protected by copyright law and its use without author's explicit c
 
 \mktxt@b{16}{\ifslovak\@cite@SK\else\ifczech\@cite@CS\else\@cite@EN\fi\fi}
 \iftoggle{slovak_used}{
-  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \@projecttype@SK. \@vut@SK, \@fit@SK. {\@supervisor@SK} {\@supervisor@s} {\@supervisor@n}. 
+  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \@projecttype@SK. \@vut@SK, \@fit@SK. {\@supervisor@SK} {\@supervisor@s} {\@supervisor@n}.
 }{
-  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \ifczech\@projecttype@CS\else\@projecttype@EN\fi. \ifczech\@vut@CS\else\@vut@EN\fi, \ifczech\@fit@CS\else\@fit@EN\fi. {\ifczech\@supervisor@CS\else\@supervisor@EN\fi} {\@supervisor@s} {\@supervisor@n}. 
+  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \ifczech\@projecttype@CS\else\@projecttype@EN\fi. \ifczech\@vut@CS\else\@vut@EN\fi, \ifczech\@fit@CS\else\@fit@EN\fi. {\ifczech\@supervisor@CS\else\@supervisor@EN\fi} {\@supervisor@s} {\@supervisor@n}.
 }
 %===================================================
 \newpage
@@ -398,7 +398,7 @@ The thesis is protected by copyright law and its use without author's explicit c
 %-----------------------------------------------------------------------------
 \newcommand\makedeclaration{
 \thispagestyle{empty}%
-\mktxt@b{18}{\@title}
+\mktxt@b{18}{\raggedright\@title}
 
 \vspace{10mm}
 \ifslovak
@@ -466,19 +466,19 @@ The thesis is protected by copyright law and its use without author's explicit c
 
 \ifGRAY
   \usebox{\@obrlogo}
-  
+
   \vspace{10mm}
-  
+
   \mkuctxtt{18}{\ifczech\@vut@CS\else\@vut@EN\fi}
   \mkuctxtt{11}{\textcolor{VUTGRAY}{\ifczech\@vut@EN\else\@vut@CS\fi}}
 
   \vspace{5mm}
-  
+
   \mkuctxtt{14}{\ifczech\@fit@CS\else\@fit@EN\fi}
   \mkuctxtt{11}{\textcolor{VUTGRAY}{\ifczech\@fit@EN\else\@fit@CS\fi}}
 
   \vspace{5mm}
-  
+
   \mkuctxtt{14}{\ifczech\@departmentname@CS\else\@departmentname@EN\fi}
   \mkuctxtt{11}{\textcolor{VUTGRAY}{\ifczech\@departmentname@EN\else\@departmentname@CS\fi}}
 
@@ -489,9 +489,9 @@ The thesis is protected by copyright law and its use without author's explicit c
 }{
   \ifJVS
     \usebox{\@obrlogo}
-  
+
     \vspace{10mm}
-  
+
     \iftoggle{slovak_used}{
       \mkuctxtt{18}{\@vut@SK}
       \mkuctxtt{11}{\@vut@EN}
@@ -501,7 +501,7 @@ The thesis is protected by copyright law and its use without author's explicit c
     }
 
     \vspace{5mm}
-  
+
     \iftoggle{slovak_used}{
       \mkuctxtt{14}{\@fit@SK}
       \mkuctxtt{11}{\@fit@EN}
@@ -511,7 +511,7 @@ The thesis is protected by copyright law and its use without author's explicit c
     }
 
     \vspace{5mm}
-  
+
     \iftoggle{slovak_used}{
       \mkuctxtt{14}{\@departmentname@SK}
       \mkuctxtt{11}{\@departmentname@EN}
